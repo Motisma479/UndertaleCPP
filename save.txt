@@ -1,0 +1,10 @@
+showDebug: 0
+takeDamage: 1
+name: Chara
+HP: 20
+ATK: 10
+DEF: 10
+EXP: 0
+LOVE: 1
+SPEED: 1
+INV: 10
