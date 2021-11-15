@@ -8,7 +8,7 @@ int main()
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Undertale");
     common::Game game;
     game.frameCounter = 0;
-    game.storedDialogue = new common::dialogue[10]; //nombre de ligne de text a stocker
+    game.storedDialogue = new common::dialogue[1024]; //nombre de ligne de text a stocker
 
     game.gameState=0;
     game.Texture = LoadTexture("assets/title.png");

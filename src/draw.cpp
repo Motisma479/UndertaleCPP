@@ -10,7 +10,7 @@ void drawStart(common::Game &game);
 void drawOverWorld(common::Game &game);
 void drawFight(common::Game &game);
 void drawGOver(common::Game &game);
-
+void updateFight(common::Game &game);
 
 void draw::updateGame(common::Game &game){
     switch (game.gameState)
@@ -28,6 +28,7 @@ void draw::updateGame(common::Game &game){
         
         break;
     case 4:
+        updateFight(game);
         break;
     case 5:
         break;
@@ -97,8 +98,9 @@ void drawIntro(common::Game &game){
     BeginDrawing();
         ClearBackground(BLUE);
         DrawTextureEx(game.Texture,{0,(float)game.intro.textureY},0,2,WHITE);
-        DrawRectangle(0,0,SCREEN_WIDTH,38*1.5-1,ColorAlpha(RED,0.5));
-        DrawRectangle(0,38*1.5+219,SCREEN_WIDTH,SCREEN_HEIGHT-38*1.5-221,ColorAlpha(RED,0.5));
+        DrawRectangle(0,0,SCREEN_WIDTH,38*1.5-1,ColorAlpha(BLACK,1));
+        DrawRectangle(0,38*1.5+219,SCREEN_WIDTH,SCREEN_HEIGHT-38*1.5-219,ColorAlpha(BLACK,1));
+        DrawRectangle(0,38*1.5-1,SCREEN_WIDTH,SCREEN_HEIGHT-38*1.5-203,ColorAlpha(BLACK,game.intro.alpha));
         if (game.showDebug == 1)
         {
             DrawText(TextFormat("Game State: %d", game.gameState), 490, 10, 20, LIGHTGRAY);
@@ -106,32 +108,98 @@ void drawIntro(common::Game &game){
             DrawText(TextFormat("Frame Counter: %d", game.frameCounter), 10, 40, 20, LIGHTGRAY);
             DrawText(TextFormat("introStartFrame: %d", game.intro.introStartFrame), 10, 70, 20, LIGHTGRAY);
             //DrawText(TextFormat("introStartFrame with modifier: %d", (int)(game.intro.introStartFrame /(1*game.deltaTime))), 10, 100, 20, LIGHTGRAY);
+            DrawText(TextFormat("slideStartFrame: %d", game.intro.introSlideStartFrame), 10, 450, 20, LIGHTGRAY);
+        }
+        switch (game.intro.dialogueToShow)
+        {
+        case 0:
+            DrawText(TextFormat("%s", game.storedDialogue[0].text.c_str()), 110, 300, 20, LIGHTGRAY);
+            break;
+        case 1:
+            DrawText(TextFormat("%s", game.storedDialogue[1].text.c_str()), 110, 300, 20, LIGHTGRAY);
+            break;
+        case 2:
+            DrawText(TextFormat("%s", game.storedDialogue[2].text.c_str()), 110, 300, 20, LIGHTGRAY);
+            break;
+        case 3:
+            DrawText(TextFormat("%s", game.storedDialogue[3].text.c_str()), 110, 300, 20, LIGHTGRAY);
+            break;
+        case 4:
+            DrawText(TextFormat("%s", game.storedDialogue[4].text.c_str()), 110, 300, 20, LIGHTGRAY);
+            break;
+        case 5:
+            DrawText(TextFormat("%s", game.storedDialogue[5].text.c_str()), 110, 300, 20, LIGHTGRAY);
+            break;
+        case 6:
+            DrawText(TextFormat("%s", game.storedDialogue[6].text.c_str()), 110, 300, 20, LIGHTGRAY);
+            break;
+        
+        default:
+            DrawText(TextFormat(""), 110, 300, 20, LIGHTGRAY);
+            break;
         }
     EndDrawing();
 }
 void updateIntro(common::Game &game){
     if (game.intro.introStartFrame <= 0){
         game.intro.introStartFrame = game.frameCounter;
-        printf("work\n");
+        //printf("work\n");
     }
     
     if (game.intro.textureY >= -4320 )
     {
-        if(game.frameCounter >= game.intro.introStartFrame+100){
+        if(game.frameCounter >= game.intro.introStartFrame+50 && game.intro.alpha > 0 && game.frameCounter <= game.intro.introStartFrame+450){
+            game.intro.alpha -= 0.05;
+        }
+        if(game.frameCounter >= game.intro.introStartFrame+450 && game.intro.alpha < 1){
+            game.intro.alpha += 0.05;
+        }
+        if(game.frameCounter >= game.intro.introStartFrame+500){
             game.intro.textureY -= SCREEN_HEIGHT ;
             game.intro.introStartFrame = game.frameCounter;
-            printf("krow\n");
+            game.intro.dialogueToShow +=1;
+            //printf("krow\n");
+        } 
+    }
+    else if (game.intro.textureY <= -4740 && game.intro.textureY >= -5224)
+    {
+        if(game.frameCounter <= game.intro.introStartFrame+1){
+            //game.intro.alpha = 0.0;
+            game.intro.textureY = -5224 ;
+        }
+        if(game.frameCounter >= game.intro.introStartFrame+50 && game.intro.alpha > 0 && game.frameCounter <= game.intro.introStartFrame + 250){
+            game.intro.alpha -= 0.05;
+            //printf("claire\n");
+        }
+        if(game.frameCounter >= game.intro.introStartFrame+250){
+        
+            if(game.frameCounter >= game.intro.introSlideStartFrame+2 && game.intro.textureY != -4740){
+                game.intro.textureY += 2 ;
+                game.intro.introSlideStartFrame = game.frameCounter;
+                //printf("krow\n");
+            }
+            if (game.frameCounter >= game.intro.introSlideStartFrame+50 && game.intro.alpha < 1)
+            {
+                game.intro.alpha += 0.05;
+                //printf("sombre\n");
+            }
+            /* if(game.intro.alpha >= 1){
+                game.intro.alpha=0;
+                game.intro.introSlideStartFrame=0;
+                game.intro.introStartFrame=0;
+                game.intro.textureY=0;
+                game.gameState = 2;
+            } */
         }
     }
-    else if (game.intro.textureY < -4320 && game.intro.textureY >= -5260)
-    {
-        
-        
-        if(game.frameCounter == game.intro.introStartFrame+2){
-            game.intro.textureY -= 2 ;
-            game.intro.introStartFrame = game.frameCounter;
-            printf("krow\n");
-        }
+    if((game.intro.textureY == -4740 && game.frameCounter >= game.intro.introStartFrame+250 && game.frameCounter >= game.intro.introSlideStartFrame+50 && game.intro.alpha >= 1)||(IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_KP_ENTER))){
+        game.intro.alpha=1;
+        game.intro.introSlideStartFrame=0;
+        game.intro.introStartFrame=0;
+        game.intro.textureY=0;
+        game.intro.dialogueToShow=0;
+        UnloadTexture(game.Texture);
+        if(game.debugBattle == 1){game.gameState = 4;}else{game.gameState = 5;}
     }
     
    
@@ -178,7 +246,14 @@ void drawFight(common::Game &game){
 
     EndDrawing();
 }
-
+void updateFight(common::Game &game){
+    if (game.battle.isStart == 1)
+    {
+        game.battle.box = LoadTexture("assets/battle_box.png");
+        game.battle.isStart=0;
+    }
+    
+}
 // Draw Game Over
 void drawGOver(common::Game &game){
     BeginDrawing();
@@ -191,8 +266,7 @@ void drawGOver(common::Game &game){
             DrawText(TextFormat("Game State: %d", game.gameState), 490, 10, 20, LIGHTGRAY);
         }
 
-
-        DrawText(TextFormat("%s", game.storedDialogue[3].text.c_str()), 10, 40, 20, LIGHTGRAY);
+        DrawText(TextFormat("%s", game.storedDialogue[5].text.c_str()), 10, 40, 20, LIGHTGRAY);
 
     EndDrawing();
 }

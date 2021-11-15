@@ -16,11 +16,14 @@ void fileManagement::readAllFile(const char* dialogue, const char* save, common:
     for (int id = 0; fgets(line, 1024, conv) != NULL; id++)
     {
         std::string cur = &line[0];
-        char* next = &line[0];
+        
         for (int i = 0; cur[i] != '\0'; i++)
-        {
+        {//text parameter
             if(cur[i]=='<' && cur[i+1]=='@' && cur[i+2]=='>'){
                 cur.replace(i,3,game.player.name);
+            }
+            if(cur[i]=='<' && cur[i+1]=='l' && cur[i+2]=='n' && cur[i+3]=='>'){
+                cur.replace(i,4,"\n");
             }
         }
         game.storedDialogue[id].text = cur;
@@ -44,22 +47,25 @@ void fileManagement::readAllFile(const char* dialogue, const char* save, common:
         case 0:
             game.showDebug = atoi(value+10);
             break;
-        case 2:
-            game.player.name = value+6;
+        case 1:
+            game.debugBattle = atoi(value+13);
             break;
         case 3:
-            game.player.HP = atoi(value+4);
+            game.player.name = value+6;
             break;
         case 4:
-            game.player.ATK = atoi(value+5);
+            game.player.HP = atoi(value+4);
             break;
         case 5:
-            game.player.DEF = atoi(value+5);
+            game.player.ATK = atoi(value+5);
             break;
         case 6:
-            game.player.EXP = atoi(value+5);
+            game.player.DEF = atoi(value+5);
             break;
         case 7:
+            game.player.EXP = atoi(value+5);
+            break;
+        case 8:
             game.player.LV = atoi(value+6);
             break;
         }
