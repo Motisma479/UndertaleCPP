@@ -4,7 +4,7 @@
 
 int main()
 {
-
+    SetConfigFlags(FLAG_VSYNC_HINT);
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Undertale");
     common::Game game;
     game.frameCounter = 0;
@@ -20,6 +20,7 @@ int main()
 
     while (!WindowShouldClose())
     {
+        
         draw::updateGame(game);
         draw::drawGame(game);
         /* printf("UNF");
@@ -27,6 +28,7 @@ int main()
         ClearBackground(RED);
         EndDrawing(); */
         game.frameCounter++;
+        game.deltaTime = GetFrameTime();
     }
 
     delete[] game.storedDialogue;

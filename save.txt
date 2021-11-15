@@ -1,4 +1,4 @@
-showDebug: 0
+showDebug: 1
 takeDamage: 1
 name: Chara
 HP: 20

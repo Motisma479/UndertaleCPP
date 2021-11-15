@@ -3,6 +3,7 @@
 #define SCREEN_HEIGHT 480
 
 #include <raylib.h>
+
 #include <string>
 
 namespace common{
@@ -41,6 +42,8 @@ namespace common{
 	class Game
 	{
 	public:
+		float deltaTime;
+
 		Player player;
 		int gameState; // 0 Start Screen; 1 Intro; 2 OverWorld; 3 Fight;4 GameOver
 		dialogue* storedDialogue;

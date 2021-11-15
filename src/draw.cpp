@@ -78,6 +78,7 @@ void drawEnter(common::Game &game){
             DrawText(TextFormat("Player EXP: %d", game.player.EXP), 10, 100, 20, LIGHTGRAY);
             DrawText(TextFormat("Player LOVE: %d", game.player.LV), 10, 130, 20, LIGHTGRAY);
             DrawText(TextFormat("Game State: %d", game.gameState), 490, 10, 20, LIGHTGRAY);
+            DrawText(TextFormat("deltaTime: %f", game.deltaTime), 10, 450, 20, LIGHTGRAY);
         }
     EndDrawing();
 }
@@ -101,6 +102,10 @@ void drawIntro(common::Game &game){
         if (game.showDebug == 1)
         {
             DrawText(TextFormat("Game State: %d", game.gameState), 490, 10, 20, LIGHTGRAY);
+            DrawText(TextFormat("deltaTime: %f", game.deltaTime), 10, 10, 20, LIGHTGRAY);
+            DrawText(TextFormat("Frame Counter: %d", game.frameCounter), 10, 40, 20, LIGHTGRAY);
+            DrawText(TextFormat("introStartFrame: %d", game.intro.introStartFrame), 10, 70, 20, LIGHTGRAY);
+            //DrawText(TextFormat("introStartFrame with modifier: %d", (int)(game.intro.introStartFrame /(1*game.deltaTime))), 10, 100, 20, LIGHTGRAY);
         }
     EndDrawing();
 }
@@ -110,19 +115,20 @@ void updateIntro(common::Game &game){
         printf("work\n");
     }
     
-    if (game.intro.textureY >= -4320)
+    if (game.intro.textureY >= -4320 )
     {
-        if(game.frameCounter == game.intro.introStartFrame+100){
-            game.intro.textureY -= SCREEN_HEIGHT;
+        if(game.frameCounter >= game.intro.introStartFrame+100){
+            game.intro.textureY -= SCREEN_HEIGHT ;
             game.intro.introStartFrame = game.frameCounter;
             printf("krow\n");
         }
     }
     else if (game.intro.textureY < -4320 && game.intro.textureY >= -5260)
     {
-        if
+        
+        
         if(game.frameCounter == game.intro.introStartFrame+2){
-            game.intro.textureY -= 2;
+            game.intro.textureY -= 2 ;
             game.intro.introStartFrame = game.frameCounter;
             printf("krow\n");
         }
