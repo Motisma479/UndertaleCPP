@@ -1,4 +1,5 @@
 #include "draw.hpp"
+#include "utils.hpp"
 
 void drawEnter(common::Game &game);
 void updateEnter(common::Game &game);
@@ -113,25 +114,48 @@ void drawIntro(common::Game &game){
         switch (game.intro.dialogueToShow)
         {
         case 0:
-            DrawText(TextFormat("%s", game.storedDialogue[0].text.c_str()), 110, 300, 20, LIGHTGRAY);
+        utils::printText(game.HBIT, TextSubtext(TextFormat("%s", game.storedDialogue[0].text.c_str()), 0, game.textFrame/5) , (Vector2){ 120.0f, 320.0f }, (float)game.HBIT.baseSize, 4, WHITE, game);
+            //DrawTextEx(game.HBIT, TextFormat("%s", game.storedDialogue[0].text.c_str()), (Vector2){ 120.0f, 320.0f }, (float)game.HBIT.baseSize, 4, WHITE);
+            //DrawText(TextFormat("%s", game.storedDialogue[0].text.c_str()), 110, 300, 20, LIGHTGRAY);
             break;
         case 1:
-            DrawText(TextFormat("%s", game.storedDialogue[1].text.c_str()), 110, 300, 20, LIGHTGRAY);
+        utils::printText(game.HBIT, TextSubtext(TextFormat("%s", game.storedDialogue[1].text.c_str()), 0, game.textFrame/5) , (Vector2){ 120.0f, 320.0f }, (float)game.HBIT.baseSize, 4, WHITE, game);
+        
+            //DrawTextEx(game.HBIT, TextFormat("%s", game.storedDialogue[1].text.c_str()), (Vector2){ 120.0f, 320.0f }, (float)game.HBIT.baseSize, 4, WHITE);
+            //DrawText(TextFormat("%s", game.storedDialogue[1].text.c_str()), 110, 300, 20, LIGHTGRAY);
             break;
         case 2:
-            DrawText(TextFormat("%s", game.storedDialogue[2].text.c_str()), 110, 300, 20, LIGHTGRAY);
+        utils::printText(game.HBIT, TextSubtext(TextFormat("%s", game.storedDialogue[2].text.c_str()), 0, game.textFrame/5) , (Vector2){ 120.0f, 320.0f }, (float)game.HBIT.baseSize, 4, WHITE, game);
+        
+            //DrawTextEx(game.HBIT, TextFormat("%s", game.storedDialogue[2].text.c_str()), (Vector2){ 120.0f, 320.0f }, (float)game.HBIT.baseSize, 4, WHITE);
+            //DrawText(TextFormat("%s", game.storedDialogue[2].text.c_str()), 110, 300, 20, LIGHTGRAY);
             break;
         case 3:
-            DrawText(TextFormat("%s", game.storedDialogue[3].text.c_str()), 110, 300, 20, LIGHTGRAY);
+        utils::printText(game.HBIT, TextSubtext(TextFormat("%s", game.storedDialogue[3].text.c_str()), 0, game.textFrame/5) , (Vector2){ 120.0f, 320.0f }, (float)game.HBIT.baseSize, 4, WHITE, game);
+        
+            //DrawTextEx(game.HBIT, TextFormat("%s", game.storedDialogue[3].text.c_str()), (Vector2){ 120.0f, 320.0f }, (float)game.HBIT.baseSize, 4, WHITE);
+            //DrawText(TextFormat("%s", game.storedDialogue[3].text.c_str()), 110, 300, 20, LIGHTGRAY);
             break;
         case 4:
-            DrawText(TextFormat("%s", game.storedDialogue[4].text.c_str()), 110, 300, 20, LIGHTGRAY);
+        utils::printText(game.HBIT, TextSubtext(TextFormat("%s", game.storedDialogue[4].text.c_str()), 0, game.textFrame/5) , (Vector2){ 120.0f, 320.0f }, (float)game.HBIT.baseSize, 4, WHITE, game);
+        
+            //DrawTextEx(game.HBIT, TextFormat("%s", game.storedDialogue[4].text.c_str()), (Vector2){ 120.0f, 320.0f }, (float)game.HBIT.baseSize, 4, WHITE);
+            //DrawText(TextFormat("%s", game.storedDialogue[4].text.c_str()), 110, 300, 20, LIGHTGRAY);
             break;
         case 5:
-            DrawText(TextFormat("%s", game.storedDialogue[5].text.c_str()), 110, 300, 20, LIGHTGRAY);
+        utils::printText(game.HBIT, TextSubtext(TextFormat("%s", game.storedDialogue[5].text.c_str()), 0, game.textFrame/5) , (Vector2){ 250.0f, 320.0f }, (float)game.HBIT.baseSize, 4, WHITE, game);
+        
+            //DrawTextEx(game.HBIT, TextFormat("%s", game.storedDialogue[5].text.c_str()), (Vector2){ 250.0f, 320.0f }, (float)game.HBIT.baseSize, 4, WHITE);
+            //DrawText(TextFormat("%s", game.storedDialogue[5].text.c_str()), 110, 300, 20, LIGHTGRAY);
             break;
         case 6:
-            DrawText(TextFormat("%s", game.storedDialogue[6].text.c_str()), 110, 300, 20, LIGHTGRAY);
+        utils::printText(game.HBIT, TextSubtext(TextFormat("%s", game.storedDialogue[6].text.c_str()), 0, game.textFrame/5) , (Vector2){ 120.0f, 320.0f }, (float)game.HBIT.baseSize, 4, WHITE, game);
+        
+           // DrawTextEx(game.HBIT, TextFormat("%s", game.storedDialogue[6].text.c_str()), (Vector2){ 120.0f, 320.0f }, (float)game.HBIT.baseSize, 4, WHITE);
+
+            //DrawTextEx(game.HBIT, TextFormat("%s", game.storedDialogue[6].text.c_str()), (Vector2){ 120.0f, 00.0f }, (float)-game.HBIT.baseSize, 4, WHITE);
+            
+            //DrawText(TextFormat("%s", game.storedDialogue[6].text.c_str()), 110, 300, 20, LIGHTGRAY);
             break;
         
         default:
@@ -158,6 +182,7 @@ void updateIntro(common::Game &game){
             game.intro.textureY -= SCREEN_HEIGHT ;
             game.intro.introStartFrame = game.frameCounter;
             game.intro.dialogueToShow +=1;
+            game.textFrame=0;
             //printf("krow\n");
         } 
     }
@@ -193,10 +218,11 @@ void updateIntro(common::Game &game){
         }
     }
     if((game.intro.textureY == -4740 && game.frameCounter >= game.intro.introStartFrame+250 && game.frameCounter >= game.intro.introSlideStartFrame+50 && game.intro.alpha >= 1)||(IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_KP_ENTER))){
-        game.intro.alpha=1;
+        game.intro.alpha=0;
         game.intro.introSlideStartFrame=0;
         game.intro.introStartFrame=0;
         game.intro.textureY=0;
+        game.textFrame=0;
         game.intro.dialogueToShow=0;
         UnloadTexture(game.Texture);
         if(game.debugBattle == 1){game.gameState = 4;}else{game.gameState = 5;}
@@ -238,12 +264,23 @@ void drawFight(common::Game &game){
     BeginDrawing();
 
         ClearBackground(BLACK);
-
+        DrawText(TextSubtext("message", 0, game.frameCounter/10), 210, 160, 20, MAROON);
         if (game.showDebug == 1)
         {
             DrawText(TextFormat("Game State: %d", game.gameState), 490, 10, 20, LIGHTGRAY);
         }
+        //DrawTextureEx(game.battle.box,(Vector2){ 0.0f, 0.0f },0,2,WHITE);
+        Rectangle Test =  { 16, 16, 246, 246 };
+        //DrawTextureRec(game.battle.box,Test,(Vector2){ Test.x, Test.y },WHITE);
+        
+        NPatchInfo ninePatchInfo1 = { (Rectangle){ 0.0f, 0.0f, 16.0f, 16.0f }, 10, 10, 10, 10, NPATCH_NINE_PATCH };
+    
 
+        DrawTextureNPatch(game.battle.box, ninePatchInfo1, Test, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
+        //DrawTexturePro(game.battle.box,SRC, Test,(Vector2){ 0, 0 },12,WHITE);
+        //utils::printText(game.HBIT, TextSubtext(TextFormat("%s", game.storedDialogue[10].text.c_str()), 0, game.textFrame/5) , (Vector2){ 0.0f, 0.0f }, (float)game.HBIT.baseSize, 4, WHITE, game);
+        //utils::printText(game.HBIT, TextSubtext(TextFormat("%s", game.storedDialogue[11].text.c_str()), 0, game.textFrame/5) , (Vector2){ 0.0f, 320.0f }, (float)game.HBIT.baseSize, 4, WHITE, game);
+    
     EndDrawing();
 }
 void updateFight(common::Game &game){
@@ -252,6 +289,7 @@ void updateFight(common::Game &game){
         game.battle.box = LoadTexture("assets/battle_box.png");
         game.battle.isStart=0;
     }
+    if (IsKeyPressed(KEY_ENTER)) game.frameCounter = 0;
     
 }
 // Draw Game Over

@@ -14,19 +14,8 @@ void fileManagement::readAllFile(const char* dialogue, const char* save, common:
     else{printf("dialogue file load sucess\n");}
     char line[1024];
     for (int id = 0; fgets(line, 1024, conv) != NULL; id++)
-    {
-        std::string cur = &line[0];
-        
-        for (int i = 0; cur[i] != '\0'; i++)
-        {//text parameter
-            if(cur[i]=='<' && cur[i+1]=='@' && cur[i+2]=='>'){
-                cur.replace(i,3,game.player.name);
-            }
-            if(cur[i]=='<' && cur[i+1]=='l' && cur[i+2]=='n' && cur[i+3]=='>'){
-                cur.replace(i,4,"\n");
-            }
-        }
-        game.storedDialogue[id].text = cur;
+    {   
+        game.storedDialogue[id].text = &line[0];;
     }
     //unload file
     fclose(conv);

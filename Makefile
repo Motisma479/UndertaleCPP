@@ -4,7 +4,7 @@ PROGRAM=Undertale
 
 SD = ./src/
 
-OBJS=$(SD)main.o $(SD)draw.o $(SD)loader.o #add an objs for each .cpp file
+OBJS=$(SD)main.o $(SD)draw.o $(SD)loader.o $(SD)utils.o #add an objs for each .cpp file
 
 CXX?=g++
 TARGET?=$(shell $(CXX) -dumpmachine)
