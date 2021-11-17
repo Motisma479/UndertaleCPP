@@ -264,33 +264,128 @@ void drawFight(common::Game &game){
     BeginDrawing();
 
         ClearBackground(BLACK);
-        DrawText(TextSubtext("message", 0, game.frameCounter/10), 210, 160, 20, MAROON);
+        DrawText(TextSubtext("Debug Battle", 0, game.frameCounter/15), 10, 10, 20, MAROON);
+        DrawFPS(525,10);
         if (game.showDebug == 1)
         {
             DrawText(TextFormat("Game State: %d", game.gameState), 490, 10, 20, LIGHTGRAY);
         }
-        //DrawTextureEx(game.battle.box,(Vector2){ 0.0f, 0.0f },0,2,WHITE);
-        Rectangle Test =  { 16, 16, 246, 246 };
-        //DrawTextureRec(game.battle.box,Test,(Vector2){ Test.x, Test.y },WHITE);
         
-        NPatchInfo ninePatchInfo1 = { (Rectangle){ 0.0f, 0.0f, 16.0f, 16.0f }, 10, 10, 10, 10, NPATCH_NINE_PATCH };
-    
+        
+        
+        DrawRectangleLinesEx(game.battle.Box,5,WHITE);
+        utils::printText(game.HBIT,TextFormat("%s", game.player.name.c_str()),(Vector2){ 32.0f, 397.0f },(float)game.HBIT.baseSize/1.2,3,WHITE,game);
+        utils::printText(game.HBIT,TextFormat("lv %d", game.player.LV),(Vector2){ 45 + game.player.name.length()*12, 397.0f },(float)game.HBIT.baseSize/1.25,3,WHITE,game);
+        utils::printText(game.HBIT,TextFormat("HP"),(Vector2){ 244, 399.0f },(float)game.HBIT.baseSize/1.75,3,WHITE,game);
+        DrawRectangle(275,400,1.25*game.player.maxHP,21,RED);// draw the maxHp bar
+        DrawRectangle(275,400,1.25*game.player.HP,21,YELLOW);// draw the Hp bar
+        // define the space between the Hp bar and the Hp Counter
+        int spaceHpAndBar = 295+(1.25*game.player.maxHP);
+        if (game.player.HP > game.player.maxHP)
+        {
+            spaceHpAndBar = 295+(1.25*game.player.HP);
+        }
+        
+        utils::printText(game.HBIT,TextFormat("%d/%d",game.player.HP,game.player.maxHP),(Vector2){ spaceHpAndBar, 397.0f },(float)game.HBIT.baseSize/1.25,3,WHITE,game); // hp / maxHP
 
-        DrawTextureNPatch(game.battle.box, ninePatchInfo1, Test, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
-        //DrawTexturePro(game.battle.box,SRC, Test,(Vector2){ 0, 0 },12,WHITE);
-        //utils::printText(game.HBIT, TextSubtext(TextFormat("%s", game.storedDialogue[10].text.c_str()), 0, game.textFrame/5) , (Vector2){ 0.0f, 0.0f }, (float)game.HBIT.baseSize, 4, WHITE, game);
-        //utils::printText(game.HBIT, TextSubtext(TextFormat("%s", game.storedDialogue[11].text.c_str()), 0, game.textFrame/5) , (Vector2){ 0.0f, 320.0f }, (float)game.HBIT.baseSize, 4, WHITE, game);
+        DrawTexturePro(game.battle.fight.buttonTexture,game.battle.fight.sizeOfFrame  ,game.battle.fight.sizeOfInteraction,(Vector2){0,0},0,WHITE);
+        //DrawTextureTiled(game.battle.fight.buttonTexture,game.battle.act.sizeOfFrame  ,game.battle.act.sizeOfInteraction,(Vector2){0,0},0,1,WHITE);
+        DrawTexturePro(game.battle.action.buttonTexture,game.battle.action.sizeOfFrame    ,game.battle.action.sizeOfInteraction  ,(Vector2){0,0},0,WHITE);
+        DrawTexturePro(game.battle.item.buttonTexture,game.battle.item.sizeOfFrame,game.battle.item.sizeOfInteraction,(Vector2){0,0},0,WHITE);
+        DrawTexturePro(game.battle.mercy.buttonTexture,game.battle.mercy.sizeOfFrame,game.battle.mercy.sizeOfInteraction,(Vector2){0,0},0,WHITE);
+
+        DrawTexturePro(game.player.Soul,game.player.sizeOfFrame,game.player.sizeOfInteraction,(Vector2){0,0},0,WHITE);
+        //DrawTexture(game.player.Soul,game.player.position.x,game.player.position.y,WHITE);
     
     EndDrawing();
 }
 void updateFight(common::Game &game){
     if (game.battle.isStart == 1)
     {
-        game.battle.box = LoadTexture("assets/battle_box.png");
         game.battle.isStart=0;
+        game.player.Soul = LoadTexture("assets/soul.png");
+
+        game.battle.fight.buttonTexture =       LoadTexture("assets/ACT.png");
+        game.battle.action.buttonTexture =       LoadTexture("assets/ACT.png");
+        game.battle.item .buttonTexture =       LoadTexture("assets/ACT.png");
+        game.battle.mercy.buttonTexture =       LoadTexture("assets/ACT.png");
+
+        
+        utils::initButton(game.battle.fight, 32, 432);
+        utils::initButton(game.battle.action, 185, 432);
+        utils::initButton(game.battle.item, 345, 432);
+        utils::initButton(game.battle.mercy, 500, 432);
+
+        utils::initSoul(game.player);
     }
-    if (IsKeyPressed(KEY_ENTER)) game.frameCounter = 0;
+    if (IsKeyPressed(KEY_ENTER)) {
+        game.frameCounter = 0;
+    }
+    //pour tester le resize box
+    if (IsKeyPressed(KEY_LEFT_CONTROL)) {
+        if(game.player.isInBattle){
+            game.player.isInBattle = false;
+        }
+        else{
+            game.player.isInBattle=true;
+        }
+    }
+    if (game.player.isInBattle)
+    {
+        utils::boxResize(game,240, 250, 140, 140);
+        if (!(game.battle.Box.x == 240 && game.battle.Box.y == 250 && game.battle.Box.width == 140 && game.battle.Box.height ==140)) {
+            game.player.position.x =                0;
+            game.player.position.y =                0;
+            game.player.sizeOfInteraction.x =       game.player.position.x;
+            game.player.sizeOfInteraction.y =       game.player.position.y;
+        }
+        //utils::boxResize(game,200, 250, 220, 140);
+        //utils::boxResize(game,200, 170, 220, 220);
+    }else{
+        utils::boxResize(game,32, 250, 575, 140);
+        if (!(game.battle.Box.x == 32 && game.battle.Box.y == 250 && game.battle.Box.width == 575 && game.battle.Box.height ==140)) {
+            game.player.position.x =                0;
+            game.player.position.y =                0;
+            game.player.sizeOfInteraction.x =       game.player.position.x;
+            game.player.sizeOfInteraction.y =       game.player.position.y;
+        }
+        /* game.player.position.x = 0;
+        game.player.position.y = 0; */
+    }
+
+    //met le joueur dans le menu apres le box resize:
+    if ((game.battle.Box.x == 32 && game.battle.Box.y == 250 && game.battle.Box.width == 575 && game.battle.Box.height ==140)  && game.player.position.y!=446) {
+        game.player.position.x =                40;
+        game.player.position.y =                446;
+        game.player.sizeOfInteraction.x =       game.player.position.x;
+        game.player.sizeOfInteraction.y =       game.player.position.y;
+    }
     
+    //movement du joueur dans le menu
+    if (!game.player.isInBattle && (game.battle.Box.x == 32 && game.battle.Box.y == 250 && game.battle.Box.width == 575 && game.battle.Box.height ==140)) {
+        if (IsKeyPressed(KEY_RIGHT)) { 
+            game.player.position.x+=30;
+            game.player.sizeOfInteraction.x =        game.player.position.x;
+            game.player.sizeOfInteraction.y =        game.player.position.y;
+        }
+        if (IsKeyPressed(KEY_LEFT)) { 
+            game.player.position.x-=30;
+            game.player.sizeOfInteraction.x =        game.player.position.x;
+            game.player.sizeOfInteraction.y =        game.player.position.y;
+        }
+    }
+
+    if (CheckCollisionRecs(game.player.sizeOfInteraction, game.battle.fight.sizeOfInteraction))
+    {
+        game.battle.fight.sizeOfFrame.y =              1*game.battle.fight.sizeOfFrame.height;
+    }else
+    {
+        game.battle.fight.sizeOfFrame.y =              0*game.battle.fight.sizeOfFrame.height;
+    }
+    
+    
+    
+
 }
 // Draw Game Over
 void drawGOver(common::Game &game){

@@ -44,3 +44,74 @@ void utils::updateName(common::Game &game){
         game.storedDialogue[i].text = text;
     } 
 }
+
+void utils::boxResize(common::Game &game, int x, int y, int width, int height){
+    int speed = 16;
+    //x
+    if (game.battle.Box.x < x)
+    {
+        game.battle.Box.x+=speed/2.1;
+        if(game.battle.Box.x > x){game.battle.Box.x = x;}
+    }else if (game.battle.Box.x > x)
+    {
+        game.battle.Box.x-=speed/2.1;
+        if(game.battle.Box.x < x){game.battle.Box.x = x;}
+    }
+    //y
+    if (game.battle.Box.y < y)
+    {
+        game.battle.Box.y+=speed/2.1;
+        if(game.battle.Box.y > y){game.battle.Box.y = y;}
+    }else if (game.battle.Box.y > y)
+    {
+        game.battle.Box.y-=speed/2.1;
+        if(game.battle.Box.y < y){game.battle.Box.y = y;}
+    }
+    //height
+    if (game.battle.Box.height < height)
+    {
+        game.battle.Box.height+=speed;
+        if(game.battle.Box.height > height){game.battle.Box.height = height;}
+    }else if (game.battle.Box.height > height)
+    {
+        game.battle.Box.height-=speed;
+        if(game.battle.Box.height < height){game.battle.Box.height = height;}
+    }
+    //width
+    if (game.battle.Box.width < width)
+    {
+        game.battle.Box.width+=speed;
+        if(game.battle.Box.width > width){game.battle.Box.width = width;}
+    }else if (game.battle.Box.width > width)
+    {
+        game.battle.Box.width-=speed;
+        if(game.battle.Box.width < width){game.battle.Box.width = width;}
+    }
+}
+
+void utils::initButton(common::button &button, int x, int y){
+        button.position.x =                 x;
+        button.position.y =                 y;
+
+        button.sizeOfFrame.height =         button.buttonTexture.height/2;
+        button.sizeOfFrame.width =          button.buttonTexture.width;
+        button.sizeOfFrame.x =              0;
+        button.sizeOfFrame.y =              0*button.sizeOfFrame.height;
+
+        button.sizeOfInteraction.x =        button.position.x;
+        button.sizeOfInteraction.y =        button.position.y;
+        button.sizeOfInteraction.height =   button.sizeOfFrame.height;
+        button.sizeOfInteraction.width =    (float)button.buttonTexture.width;
+}
+
+void utils::initSoul(common::Player &player){
+
+        player.sizeOfFrame.height =         player.Soul.height/2;
+        player.sizeOfFrame.width =          player.Soul.width;
+        player.sizeOfFrame.x =              0*player.sizeOfFrame.width;
+
+        player.sizeOfInteraction.x =        player.position.x;
+        player.sizeOfInteraction.y =        player.position.y;
+        player.sizeOfInteraction.height =   player.sizeOfFrame.height;
+        player.sizeOfInteraction.width =    (float)player.Soul.width;
+}

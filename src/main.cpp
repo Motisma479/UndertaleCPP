@@ -15,7 +15,7 @@ int main()
     game.Texture = LoadTexture("assets/title.png");
     fileManagement::readAllFile((const char*)"dialogue.txt",(const char*)"save.txt", game);
     utils::updateName(game);
-
+    game.player.maxHP=16+(game.player.LV*4);
     //Rectangle window = {,SCREEN_HEIGHT/2,SCREEN_WIDTH/2,SCREEN_HEIGHT/2};
 
     game.HBIT = LoadFontEx("assets/8bitoperator_jve.ttf", 32, 0, 250);
