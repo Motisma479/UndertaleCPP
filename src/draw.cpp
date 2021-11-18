@@ -296,7 +296,12 @@ void drawFight(common::Game &game){
 
         DrawTexturePro(game.player.Soul,game.player.sizeOfFrame,game.player.sizeOfInteraction,(Vector2){0,0},0,WHITE);
         //DrawTexture(game.player.Soul,game.player.position.x,game.player.position.y,WHITE);
-    
+
+        for (int i = 0; i < 1; i++){
+            game.monsters[i]->animate(game);
+            game.monsters[i]->drawSprite();
+        }
+        
     EndDrawing();
 }
 void updateFight(common::Game &game){
@@ -305,16 +310,16 @@ void updateFight(common::Game &game){
         game.battle.isStart=0;
         game.player.Soul = LoadTexture("assets/soul.png");
 
-        game.battle.fight.buttonTexture =       LoadTexture("assets/ACT.png");
+        game.battle.fight.buttonTexture =       LoadTexture("assets/FIGHT.png");
         game.battle.action.buttonTexture =       LoadTexture("assets/ACT.png");
-        game.battle.item .buttonTexture =       LoadTexture("assets/ACT.png");
-        game.battle.mercy.buttonTexture =       LoadTexture("assets/ACT.png");
+        game.battle.item .buttonTexture =       LoadTexture("assets/ITEM.png");
+        game.battle.mercy.buttonTexture =       LoadTexture("assets/MERCY.png");
 
         
-        utils::initButton(game.battle.fight, 32, 432);
-        utils::initButton(game.battle.action, 185, 432);
-        utils::initButton(game.battle.item, 345, 432);
-        utils::initButton(game.battle.mercy, 500, 432);
+        utils::initButton(game.battle.fight, 31, 431);
+        utils::initButton(game.battle.action, 184, 431);
+        utils::initButton(game.battle.item, 344, 431);
+        utils::initButton(game.battle.mercy, 499, 431);
 
         utils::initSoul(game.player);
     }
@@ -332,7 +337,8 @@ void updateFight(common::Game &game){
     }
     if (game.player.isInBattle)
     {
-        utils::boxResize(game,240, 250, 140, 140);
+        // utils::boxResize(game,240, 250, 140, 140);
+        utils::boxResize(game,32, 200, 575, 190);
         if (!(game.battle.Box.x == 240 && game.battle.Box.y == 250 && game.battle.Box.width == 140 && game.battle.Box.height ==140)) {
             game.player.position.x =                0;
             game.player.position.y =                0;
@@ -364,17 +370,53 @@ void updateFight(common::Game &game){
     //movement du joueur dans le menu
     if (!game.player.isInBattle && (game.battle.Box.x == 32 && game.battle.Box.y == 250 && game.battle.Box.width == 575 && game.battle.Box.height ==140)) {
         if (IsKeyPressed(KEY_RIGHT)) { 
-            game.player.position.x+=30;
+            int pos = game.player.position.x;
+            switch (pos)
+            {
+            case 40:
+                game.player.position.x+=153;
+                break;
+            case 193:
+                game.player.position.x+=160;
+                break;
+            case 353:
+                game.player.position.x+=155;
+                break;
+            case 508:
+                game.player.position.x+=0;
+                break;
+            default:
+                game.player.position.x=40;
+            }
             game.player.sizeOfInteraction.x =        game.player.position.x;
             game.player.sizeOfInteraction.y =        game.player.position.y;
         }
         if (IsKeyPressed(KEY_LEFT)) { 
-            game.player.position.x-=30;
+            int pos = game.player.position.x;
+
+            switch (pos)
+            {
+            case 40:
+                game.player.position.x-=0;
+                break;
+            case 193:
+                game.player.position.x-=153;
+                break;
+            case 353:
+                game.player.position.x-=160;
+                break;
+            case 508:
+                game.player.position.x-=155;
+                break;
+            default:
+                game.player.position.x=40;
+            }
             game.player.sizeOfInteraction.x =        game.player.position.x;
             game.player.sizeOfInteraction.y =        game.player.position.y;
         }
     }
 
+    //collission with fight
     if (CheckCollisionRecs(game.player.sizeOfInteraction, game.battle.fight.sizeOfInteraction))
     {
         game.battle.fight.sizeOfFrame.y =              1*game.battle.fight.sizeOfFrame.height;
@@ -382,9 +424,30 @@ void updateFight(common::Game &game){
     {
         game.battle.fight.sizeOfFrame.y =              0*game.battle.fight.sizeOfFrame.height;
     }
-    
-    
-    
+    //collission with act
+    if (CheckCollisionRecs(game.player.sizeOfInteraction, game.battle.action.sizeOfInteraction))
+    {
+        game.battle.action.sizeOfFrame.y =              1*game.battle.action.sizeOfFrame.height;
+    }else
+    {
+        game.battle.action.sizeOfFrame.y =              0*game.battle.action.sizeOfFrame.height;
+    } 
+    //collission with item
+    if (CheckCollisionRecs(game.player.sizeOfInteraction, game.battle.item.sizeOfInteraction))
+    {
+        game.battle.item.sizeOfFrame.y =              1*game.battle.item.sizeOfFrame.height;
+    }else
+    {
+        game.battle.item.sizeOfFrame.y =              0*game.battle.item.sizeOfFrame.height;
+    } 
+    //collission with mercy
+    if (CheckCollisionRecs(game.player.sizeOfInteraction, game.battle.mercy.sizeOfInteraction))
+    {
+        game.battle.mercy.sizeOfFrame.y =              1*game.battle.mercy.sizeOfFrame.height;
+    }else
+    {
+        game.battle.mercy.sizeOfFrame.y =              0*game.battle.mercy.sizeOfFrame.height;
+    } 
 
 }
 // Draw Game Over

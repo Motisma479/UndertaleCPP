@@ -7,6 +7,7 @@
 #include <string>
 
 namespace common{
+	class Game;
 	class LivingEntity
 	{
 	public:
@@ -33,10 +34,15 @@ namespace common{
 	};
 	class Monster : public LivingEntity
 	{
-	public:
+	protected:
 		bool Mercyable = false;
+		int backGround = 1;//0=None 1=Standare 2=boss
+	public:
+		
 		//void attack();
-		bool boss = false;
+		
+		virtual void animate(common::Game &game) = 0;
+		virtual void drawSprite() = 0;
 	};
 
 	struct dialogue
@@ -44,6 +50,14 @@ namespace common{
 		std::string text;
 	};
 	
+	struct bodyPart
+	{
+		Texture2D texture;
+		Rectangle sizeofDraw;
+		Rectangle sizeofPart;
+		Vector2 origin = {0,0};
+	};
+
 	class introduction
 	{
 	public:
@@ -91,7 +105,7 @@ namespace common{
 		Font 			HBIT;
 		dialogue* 		storedDialogue;
 		int 			dialogueLine;
-
+		Monster* monsters[3];
 		Texture2D 		Texture;
 		
 		introduction 	intro;
