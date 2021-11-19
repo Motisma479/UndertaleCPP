@@ -68,10 +68,15 @@ private:
     common::bodyPart Monklegs;
     Rectangle sizeOfEnemie;
     unsigned int rgb;
+    bool asDoneHisFristAnimation=false;
+    bool torsoLeftToRight=true;
+    bool headLeftToRight=false;
+    bool legsLeftToRight=false;
 public:
     SpiderMonkey();
     ~SpiderMonkey();
     void animate(common::Game &game) override;
+    void drawTextBox(common::Game &game) override;
     void drawSprite() override;
 };
 
@@ -86,6 +91,15 @@ SpiderMonkey::SpiderMonkey() {
 
     Monklegs.texture = LoadTexture("assets/monster/sans/legs.png");
     Monklegs.sizeofPart = {0,0,(float)Monklegs.texture.width,(float)Monklegs.texture.height};
+
+    maxHP=100;
+    HP=maxHP;
+    name="SpiderMonkey";
+    backGround=2;
+    ATK=1;
+	DEF=1;
+
+    neutralPicker = GetRandomValue(21, 25);
     
 }
 
@@ -100,35 +114,89 @@ void SpiderMonkey::animate(common::Game &game) {
     Monktorso.sizeofDraw = {(float)((SCREEN_HEIGHT/2)+16),Monklegs.sizeofDraw.y-Monktorso.texture.height*2,(float)Monktorso.texture.width*2,(float)Monktorso.texture.height*2};//the x and y is the pos of the texture in the window
     Monkhead.sizeofDraw = {(float)SCREEN_HEIGHT/2+6+Monkhead.texture.width,Monktorso.sizeofDraw.y-Monkhead.texture.height-17,(float)Monkhead.texture.width*2,(float)Monkhead.texture.height*2};//the x and y is the pos of the texture in the window
     
-   Monkhead.origin.x+=3;
-    if (Monkhead.origin.x == 0)
-    {
-        Monkhead.origin.x = -3;
-    }
-    if (Monkhead.origin.x > 345)
-    {
-        Monkhead.origin.x = -345;
-    }
-    
-    Monklegs.origin.y-=3;
-        if (Monklegs.origin.y == 0)
+    if(!asDoneHisFristAnimation){
+        Monkhead.origin.x+=3;
+        Monklegs.origin.y-=3;
+        Monktorso.origin.x-=3;
+        if (Monkhead.origin.x==0 && Monklegs.origin.x==0 && Monktorso.origin.x==0)
         {
-            Monklegs.origin.y = 3;
+            asDoneHisFristAnimation = true;
         }
+        
+
+        // if (Monkhead.origin.x == 0)
+        // {
+        //     Monkhead.origin.x = -3;
+        // }
+        if (Monkhead.origin.x > 345)
+        {
+            Monkhead.origin.x = -345;
+        }
+        // if (Monklegs.origin.y == 0)
+        // {
+        //     Monklegs.origin.y = 3;
+        // }
         if (Monklegs.origin.y < -345)
         {
             Monklegs.origin.y = 345;
         }
-    
-    Monktorso.origin.x-=3;
-        if (Monktorso.origin.x == 0)
-        {
-            Monktorso.origin.x = 3;
-        }
+        // if (Monktorso.origin.x == 0)
+        // {
+        //     Monktorso.origin.x = 3;
+        // }
         if (Monktorso.origin.x < -345)
         {
             Monktorso.origin.x = 345;
         }
+    }
+    else{
+        if (torsoLeftToRight)
+        {
+            Monktorso.origin.x+=2;
+            if (Monktorso.origin.x > 10)
+            {
+                torsoLeftToRight=false;
+            }
+        }else{
+            Monktorso.origin.x-=2;
+            if (Monktorso.origin.x < -10)
+            {
+                torsoLeftToRight=true;
+            }
+        }
+        
+        if (headLeftToRight)
+        {
+            Monkhead.origin.x+=2;
+            if (Monkhead.origin.x > 5)
+            {
+                headLeftToRight=false;
+            }
+        }else{
+            Monkhead.origin.x-=2;
+            if (Monkhead.origin.x < -5)
+            {
+                headLeftToRight=true;
+            }
+        }
+
+        if (legsLeftToRight)
+        {
+            Monklegs.origin.x+=0.1;
+            if (Monklegs.origin.x > 2) 
+            {
+                legsLeftToRight=false;
+            }
+        }else{
+            Monklegs.origin.x-=0.1;
+            if (Monklegs.origin.x < -2)
+            {
+                legsLeftToRight=true;
+            }
+        }
+        
+    }
+   
     rgb = ((rgb+10)%0xffff);
     
 }
@@ -139,4 +207,19 @@ void SpiderMonkey::drawSprite() {
     DrawTexturePro(Monklegs.texture,Monklegs.sizeofPart,Monklegs.sizeofDraw,Monklegs.origin,0,ColorFromHSV(rgb,0.5,1.0));
     DrawTexturePro(Monktorso.texture,Monktorso.sizeofPart,Monktorso.sizeofDraw,Monktorso.origin,0,ColorFromHSV(rgb,0.5,1.0));
     DrawTexturePro(Monkhead .texture,Monkhead .sizeofPart,Monkhead .sizeofDraw,Monkhead.origin,0,ColorFromHSV(rgb,0.5,1.0));
+    DrawText(TextFormat("%s", name.c_str()), 222, 10, 29, ColorFromHSV(rgb,0.5,1.0));
+}
+
+void SpiderMonkey::drawTextBox(common::Game &game) {
+    std::string text;
+    if (game.battle.EncounterPhase)
+    {
+        text = utils::preLoadMonsterName(game.storedDialogue[15].text, name);
+         
+        //utils::printText(game.HBIT, TextSubtext(TextFormat("%s", game.storedDialogue[0].text.c_str()), 0, game.textFrame/5) , (Vector2){ 120.0f, 320.0f }, (float)game.HBIT.baseSize, 4, WHITE, game);
+    }else{
+        text = utils::preLoadMonsterName(game.storedDialogue[neutralPicker].text, name);
+    }
+    DrawTextPro(game.HBIT,TextSubtext("*", 0, game.textFrame/5),(Vector2){ game.battle.Box.x+20, game.battle.Box.y+20 },(Vector2){ 0,0 },0,(float)game.HBIT.baseSize/1,3,WHITE);
+    utils::printText(game.HBIT,TextSubtext(TextFormat("%s", text.c_str()), 0, game.textFrame/5),(Vector2){ game.battle.Box.x+50, game.battle.Box.y+20 },(float)game.HBIT.baseSize/1,3,WHITE,game);
 }

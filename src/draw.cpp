@@ -264,48 +264,106 @@ void drawFight(common::Game &game){
     BeginDrawing();
 
         ClearBackground(BLACK);
+
+        //draw background
+        DrawTexture(game.battle.background,0,0,WHITE);
+
         DrawText(TextSubtext("Debug Battle", 0, game.frameCounter/15), 10, 10, 20, MAROON);
         DrawFPS(525,10);
         if (game.showDebug == 1)
         {
-            DrawText(TextFormat("Game State: %d", game.gameState), 490, 10, 20, LIGHTGRAY);
+            DrawText(TextFormat("Game State: %d", game.gameState), 450, 260, 20, LIGHTGRAY);
+            DrawText(TextFormat("Button Id: %d", game.battle.buttonId), 450, 290, 20, LIGHTGRAY);
         }
         
         
-        
+
+        //draw the Box
         DrawRectangleLinesEx(game.battle.Box,5,WHITE);
+
+        //draw the player name
         utils::printText(game.HBIT,TextFormat("%s", game.player.name.c_str()),(Vector2){ 32.0f, 397.0f },(float)game.HBIT.baseSize/1.2,3,WHITE,game);
-        utils::printText(game.HBIT,TextFormat("lv %d", game.player.LV),(Vector2){ 45 + game.player.name.length()*12, 397.0f },(float)game.HBIT.baseSize/1.25,3,WHITE,game);
+
+        //draw the player LV
+        utils::printText(game.HBIT,TextFormat("lv %d", game.player.LV),(Vector2){ 45.0f + (float) game.player.name.length()*12, 397.0f },(float)game.HBIT.baseSize/1.25,3,WHITE,game);
+
+        //draw HP at front of the HP Bar
         utils::printText(game.HBIT,TextFormat("HP"),(Vector2){ 244, 399.0f },(float)game.HBIT.baseSize/1.75,3,WHITE,game);
-        DrawRectangle(275,400,1.25*game.player.maxHP,21,RED);// draw the maxHp bar
-        DrawRectangle(275,400,1.25*game.player.HP,21,YELLOW);// draw the Hp bar
+
+        // draw the maxHp bar
+        DrawRectangle(275,400,1.25*game.player.maxHP,21,RED);
+
+        // draw the Hp bar
+        DrawRectangle(275,400,1.25*game.player.HP,21,YELLOW);
+
         // define the space between the Hp bar and the Hp Counter
         int spaceHpAndBar = 295+(1.25*game.player.maxHP);
         if (game.player.HP > game.player.maxHP)
         {
             spaceHpAndBar = 295+(1.25*game.player.HP);
-        }
-        
-        utils::printText(game.HBIT,TextFormat("%d/%d",game.player.HP,game.player.maxHP),(Vector2){ spaceHpAndBar, 397.0f },(float)game.HBIT.baseSize/1.25,3,WHITE,game); // hp / maxHP
+        }  
 
-        DrawTexturePro(game.battle.fight.buttonTexture,game.battle.fight.sizeOfFrame  ,game.battle.fight.sizeOfInteraction,(Vector2){0,0},0,WHITE);
-        //DrawTextureTiled(game.battle.fight.buttonTexture,game.battle.act.sizeOfFrame  ,game.battle.act.sizeOfInteraction,(Vector2){0,0},0,1,WHITE);
-        DrawTexturePro(game.battle.action.buttonTexture,game.battle.action.sizeOfFrame    ,game.battle.action.sizeOfInteraction  ,(Vector2){0,0},0,WHITE);
-        DrawTexturePro(game.battle.item.buttonTexture,game.battle.item.sizeOfFrame,game.battle.item.sizeOfInteraction,(Vector2){0,0},0,WHITE);
-        DrawTexturePro(game.battle.mercy.buttonTexture,game.battle.mercy.sizeOfFrame,game.battle.mercy.sizeOfInteraction,(Vector2){0,0},0,WHITE);
+        // hp / maxHP
+        utils::printText(game.HBIT,TextFormat("%d/%d",game.player.HP,game.player.maxHP),(Vector2){ (float) spaceHpAndBar, 397.0f },(float)game.HBIT.baseSize/1.25,3,WHITE,game); 
 
+        //draw the FIGHT, ACT, ITEM and MERCY buttons
+        DrawTexturePro(game.battle.fight.buttonTexture,game.battle.fight.sizeOfFrame    ,game.battle.fight.sizeOfInteraction    ,(Vector2){0,0},0,WHITE);
+        DrawTexturePro(game.battle.action.buttonTexture,game.battle.action.sizeOfFrame  ,game.battle.action.sizeOfInteraction   ,(Vector2){0,0},0,WHITE);
+        DrawTexturePro(game.battle.item.buttonTexture,game.battle.item.sizeOfFrame      ,game.battle.item.sizeOfInteraction     ,(Vector2){0,0},0,WHITE);
+        DrawTexturePro(game.battle.mercy.buttonTexture,game.battle.mercy.sizeOfFrame    ,game.battle.mercy.sizeOfInteraction    ,(Vector2){0,0},0,WHITE);
+
+        //Draw the soul of the player
         DrawTexturePro(game.player.Soul,game.player.sizeOfFrame,game.player.sizeOfInteraction,(Vector2){0,0},0,WHITE);
         //DrawTexture(game.player.Soul,game.player.position.x,game.player.position.y,WHITE);
 
+        //Draw the monsters
         for (int i = 0; i < 1; i++){
             game.monsters[i]->animate(game);
             game.monsters[i]->drawSprite();
         }
+        //game.monsters[GetRandomValue(0, 2)];
+        if ((game.battle.Box.x == 32 && game.battle.Box.y == 250 && game.battle.Box.width == 575 && game.battle.Box.height ==140)  &&!game.player.isInBattle)
+        {
+            if (game.battle.buttonMenu == 0)
+            {
+                game.monsters[0]->drawTextBox(game);
+            }else if (game.battle.buttonMenu == 1)
+            {
+                DrawTextEx(game.HBIT,TextFormat("* %s",game.monsters[0]->name.c_str()),(Vector2){ game.battle.Box.x+75, game.battle.Box.y+20},(float)game.HBIT.baseSize/1,3,WHITE);
+            }else if (game.battle.buttonMenu == 2)
+            {
+                DrawTextEx(game.HBIT,TextFormat("* %s",game.monsters[0]->name.c_str()),(Vector2){ game.battle.Box.x+75, game.battle.Box.y+20},(float)game.HBIT.baseSize/1,3,WHITE);
+            }else if (game.battle.buttonMenu == 3)
+            {
+                int basey = 20;
+                int basex = 75;
+                for (int i = 0; i < 4 && game.player.item[i] != NULL; i++)
+                {
+                    DrawTextEx(game.HBIT,TextFormat("* %s",game.player.item[0]->name.c_str()),(Vector2){ game.battle.Box.x+basex, game.battle.Box.y+basey},(float)game.HBIT.baseSize/1,3,WHITE);
+                    basex += 250;
+                    if (basex > 325)
+                    {
+                        basex = 75;
+                        basey+=30;
+                    }
+                }
+                DrawTextEx(game.HBIT,TextFormat("Page 1"),(Vector2){ game.battle.Box.x+355, game.battle.Box.y+80},(float)game.HBIT.baseSize/1,3,WHITE);
+                //DrawTextEx(game.HBIT,TextFormat("* %s",game.player.item[0]->name.c_str()),(Vector2){ game.battle.Box.x+75, game.battle.Box.y+20},(float)game.HBIT.baseSize/1,3,WHITE);
+                //DrawTextEx(game.HBIT,TextFormat("* %s",game.player.item[1]->name.c_str()),(Vector2){ game.battle.Box.x+75, game.battle.Box.y+50},(float)game.HBIT.baseSize/1,3,WHITE);
+            }
+            
+
+        }
+        
+        
+        
+        
         
     EndDrawing();
 }
 void updateFight(common::Game &game){
-    if (game.battle.isStart == 1)
+    //execute when a fight is started
+    if (game.battle.isStart)
     {
         game.battle.isStart=0;
         game.player.Soul = LoadTexture("assets/soul.png");
@@ -315,6 +373,18 @@ void updateFight(common::Game &game){
         game.battle.item .buttonTexture =       LoadTexture("assets/ITEM.png");
         game.battle.mercy.buttonTexture =       LoadTexture("assets/MERCY.png");
 
+        switch (game.monsters[0]->backGround)
+        {
+        case 1:
+            game.battle.background = LoadTexture("assets/standar_background.png");
+            break;
+        case 2:
+            game.battle.background = LoadTexture("assets/boss_background.png");
+            break;
+        default:
+            break;
+        }
+        
         
         utils::initButton(game.battle.fight, 31, 431);
         utils::initButton(game.battle.action, 184, 431);
@@ -323,10 +393,40 @@ void updateFight(common::Game &game){
 
         utils::initSoul(game.player);
     }
+
+    //When Enter is pressed
     if (IsKeyPressed(KEY_ENTER)) {
-        game.frameCounter = 0;
+        /* game.frameCounter = 0;
+        game.monsters[0]->neutralPicker = GetRandomValue(21, 25); */
+        if(game.battle.buttonMenu == 0){
+            if (game.battle.buttonId == 0)
+            {
+                game.battle.buttonMenu = 1;
+            }else if (game.battle.buttonId == 1)
+            {
+                game.battle.buttonMenu = 2;
+            }else if (game.battle.buttonId == 2)
+            {
+                game.battle.buttonMenu = 3;
+            }else if (game.battle.buttonId == 3)
+            {
+                game.battle.buttonMenu = 4;
+            }
+        }
+        
+        
     }
-    //pour tester le resize box
+    if (IsKeyPressed(KEY_X)) {
+        /* game.frameCounter = 0;
+        game.monsters[0]->neutralPicker = GetRandomValue(21, 25); */
+        if (game.battle.buttonMenu == 1 || game.battle.buttonMenu == 2 || game.battle.buttonMenu == 3 || game.battle.buttonMenu == 4)
+        {
+            game.battle.buttonMenu = 0;
+        }
+        
+    }
+
+    //for test the resize box
     if (IsKeyPressed(KEY_LEFT_CONTROL)) {
         if(game.player.isInBattle){
             game.player.isInBattle = false;
@@ -334,19 +434,21 @@ void updateFight(common::Game &game){
         else{
             game.player.isInBattle=true;
         }
+
+        game.battle.EncounterPhase=false;
     }
+    
+    //box resizer
     if (game.player.isInBattle)
     {
-        // utils::boxResize(game,240, 250, 140, 140);
-        utils::boxResize(game,32, 200, 575, 190);
+        utils::boxResize(game,240, 250, 140, 140);
+        // utils::boxResize(game,32, 200, 575, 190);//Test for box resize in height
         if (!(game.battle.Box.x == 240 && game.battle.Box.y == 250 && game.battle.Box.width == 140 && game.battle.Box.height ==140)) {
             game.player.position.x =                0;
             game.player.position.y =                0;
             game.player.sizeOfInteraction.x =       game.player.position.x;
             game.player.sizeOfInteraction.y =       game.player.position.y;
         }
-        //utils::boxResize(game,200, 250, 220, 140);
-        //utils::boxResize(game,200, 170, 220, 220);
     }else{
         utils::boxResize(game,32, 250, 575, 140);
         if (!(game.battle.Box.x == 32 && game.battle.Box.y == 250 && game.battle.Box.width == 575 && game.battle.Box.height ==140)) {
@@ -354,62 +456,146 @@ void updateFight(common::Game &game){
             game.player.position.y =                0;
             game.player.sizeOfInteraction.x =       game.player.position.x;
             game.player.sizeOfInteraction.y =       game.player.position.y;
+
+            game.textFrame=0;
         }
-        /* game.player.position.x = 0;
-        game.player.position.y = 0; */
     }
 
-    //met le joueur dans le menu apres le box resize:
-    if ((game.battle.Box.x == 32 && game.battle.Box.y == 250 && game.battle.Box.width == 575 && game.battle.Box.height ==140)  && game.player.position.y!=446) {
-        game.player.position.x =                40;
+    //Put the Player in the menu after the box resize:
+    if ((game.battle.Box.x == 32 && game.battle.Box.y == 250 && game.battle.Box.width == 575 && game.battle.Box.height ==140)  && game.player.position.y!=446 && game.battle.buttonMenu == 0) {
+        switch (game.battle.buttonId)
+        {
+        case 0:
+            game.player.position.x =                40;
+            break;
+        case 1:
+            game.player.position.x =                193;
+            break;
+        case 2:
+            game.player.position.x =                353;
+            break;
+        case 3:
+            game.player.position.x =                508;
+            break;
+        
+        default:
+            game.player.position.x =                40;
+            break;
+        }
         game.player.position.y =                446;
         game.player.sizeOfInteraction.x =       game.player.position.x;
         game.player.sizeOfInteraction.y =       game.player.position.y;
     }
+    //Put the Player in the box for interaction
+    if (game.battle.buttonMenu != 0 && ( game.player.position.y!=game.battle.Box.y+30  &&  game.player.position.y!=game.battle.Box.y+60)) {
+        game.player.position.x =                game.battle.Box.x+35;
+        game.player.position.y =                game.battle.Box.y+30;
+        game.player.sizeOfInteraction.x =       game.player.position.x;
+        game.player.sizeOfInteraction.y =       game.player.position.y;
+    }
     
-    //movement du joueur dans le menu
+    //movement of the Player in the menu
     if (!game.player.isInBattle && (game.battle.Box.x == 32 && game.battle.Box.y == 250 && game.battle.Box.width == 575 && game.battle.Box.height ==140)) {
-        if (IsKeyPressed(KEY_RIGHT)) { 
+        if (IsKeyPressed(KEY_RIGHT)) {
             int pos = game.player.position.x;
-            switch (pos)
+            if(game.battle.buttonMenu==0)//button FIGHT ect...
             {
-            case 40:
-                game.player.position.x+=153;
-                break;
-            case 193:
-                game.player.position.x+=160;
-                break;
-            case 353:
-                game.player.position.x+=155;
-                break;
-            case 508:
-                game.player.position.x+=0;
-                break;
-            default:
-                game.player.position.x=40;
+                switch (pos)
+                {
+                case 40:
+                    game.player.position.x+=153;
+                    break;
+                case 193:
+                    game.player.position.x+=160;
+                    break;
+                case 353:
+                    game.player.position.x+=155;
+                    break;
+                case 508:
+                    game.player.position.x+=0;
+                    break;
+                default:
+                    game.player.position.x=40;
+                }
+            }
+            if(game.battle.buttonMenu==3)//Item
+            {
+                switch (pos)
+                {
+                case 67:
+                    game.player.position.x+=253;
+                    break;
+                default:
+                    game.player.position.x=67;
+                }
             }
             game.player.sizeOfInteraction.x =        game.player.position.x;
             game.player.sizeOfInteraction.y =        game.player.position.y;
         }
         if (IsKeyPressed(KEY_LEFT)) { 
             int pos = game.player.position.x;
-
-            switch (pos)
+            if(game.battle.buttonMenu==0)//button FIGHT ect...
             {
-            case 40:
-                game.player.position.x-=0;
-                break;
-            case 193:
-                game.player.position.x-=153;
-                break;
-            case 353:
-                game.player.position.x-=160;
-                break;
-            case 508:
-                game.player.position.x-=155;
-                break;
-            default:
-                game.player.position.x=40;
+                switch (pos)
+                {
+                case 40:
+                    game.player.position.x-=0;
+                    break;
+                case 193:
+                    game.player.position.x-=153;
+                    break;
+                case 353:
+                    game.player.position.x-=160;
+                    break;
+                case 508:
+                    game.player.position.x-=155;
+                    break;
+                default:
+                    game.player.position.x=40;
+                }
+            }
+            if(game.battle.buttonMenu==3)//ITEM
+            {
+                switch (pos)
+                {
+                case 320:
+                    game.player.position.x-=253;
+                    break;
+                default:
+                    game.player.position.x=320;
+                }
+            }
+            game.player.sizeOfInteraction.x =        game.player.position.x;
+            game.player.sizeOfInteraction.y =        game.player.position.y;
+        }
+        if(IsKeyPressed(KEY_UP)){
+            int pos = game.player.position.y;
+            if(game.battle.buttonMenu==3)//ITEM
+            {
+                switch (pos)
+                {
+                case 310:
+                    game.player.position.y-=30;
+                    break;
+                default:
+                    game.player.position.y=310;
+                }
+            }
+            game.player.sizeOfInteraction.x =        game.player.position.x;
+            game.player.sizeOfInteraction.y =        game.player.position.y;
+        }
+        if(IsKeyPressed(KEY_DOWN)){
+            int pos = game.player.position.y;
+            if(game.battle.buttonMenu==3)//ITEM
+            {
+                switch (pos)
+                {
+                case 280:
+                    game.player.position.y+=30;
+                    break;
+                default:
+                    game.player.position.y=280;
+                }
             }
             game.player.sizeOfInteraction.x =        game.player.position.x;
             game.player.sizeOfInteraction.y =        game.player.position.y;
@@ -420,6 +606,7 @@ void updateFight(common::Game &game){
     if (CheckCollisionRecs(game.player.sizeOfInteraction, game.battle.fight.sizeOfInteraction))
     {
         game.battle.fight.sizeOfFrame.y =              1*game.battle.fight.sizeOfFrame.height;
+        game.battle.buttonId = 0;
     }else
     {
         game.battle.fight.sizeOfFrame.y =              0*game.battle.fight.sizeOfFrame.height;
@@ -428,6 +615,7 @@ void updateFight(common::Game &game){
     if (CheckCollisionRecs(game.player.sizeOfInteraction, game.battle.action.sizeOfInteraction))
     {
         game.battle.action.sizeOfFrame.y =              1*game.battle.action.sizeOfFrame.height;
+        game.battle.buttonId = 1;
     }else
     {
         game.battle.action.sizeOfFrame.y =              0*game.battle.action.sizeOfFrame.height;
@@ -436,6 +624,7 @@ void updateFight(common::Game &game){
     if (CheckCollisionRecs(game.player.sizeOfInteraction, game.battle.item.sizeOfInteraction))
     {
         game.battle.item.sizeOfFrame.y =              1*game.battle.item.sizeOfFrame.height;
+        game.battle.buttonId = 2;
     }else
     {
         game.battle.item.sizeOfFrame.y =              0*game.battle.item.sizeOfFrame.height;
@@ -444,11 +633,12 @@ void updateFight(common::Game &game){
     if (CheckCollisionRecs(game.player.sizeOfInteraction, game.battle.mercy.sizeOfInteraction))
     {
         game.battle.mercy.sizeOfFrame.y =              1*game.battle.mercy.sizeOfFrame.height;
+        game.battle.buttonId = 3;
     }else
     {
         game.battle.mercy.sizeOfFrame.y =              0*game.battle.mercy.sizeOfFrame.height;
     } 
-
+    
 }
 // Draw Game Over
 void drawGOver(common::Game &game){

@@ -3,6 +3,7 @@
 #include "loader.hpp"
 #include "utils.hpp"
 #include "monster.hpp"
+#include "items.hpp"
 
 int main()
 {
@@ -20,8 +21,17 @@ int main()
     //Rectangle window = {,SCREEN_HEIGHT/2,SCREEN_WIDTH/2,SCREEN_HEIGHT/2};
 
     game.HBIT = LoadFontEx("assets/8bitoperator_jve.ttf", 32, 0, 250);
-    //game.monsters[0] = new Sans();
+
+    /***************Temporary***************/
+    //enemy
+    // game.monsters[0] = new Sans();
     game.monsters[0] = new SpiderMonkey();
+    //item
+    game.player.item[0] = new Sandwich();
+    game.player.item[1] = new Sandwich();
+    game.player.item[2] = new Sandwich();
+    game.player.item[3] = new Sandwich();
+    /***************************************/
 
 
     SetTargetFPS(60);
@@ -38,8 +48,16 @@ int main()
         game.deltaTime = GetFrameTime();
     }
 
+    /***************Temporary***************/
+    //enemy
+    //delete game.monsters[1];
     delete game.monsters[0];
-    delete game.monsters[1];
+    //item
+    delete game.player.item[0];
+    delete game.player.item[1];
+    delete game.player.item[2];
+    delete game.player.item[3];
+    /***************************************/
 
     UnloadFont(game.HBIT);
     delete[] game.storedDialogue;

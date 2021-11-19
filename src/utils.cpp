@@ -13,14 +13,18 @@ void utils::printText(Font font, const char *rawText, Vector2 position, float fo
                 
 
                 positionII+=35;
-                printText(font, (const char *)copy.c_str(), (Vector2){position.x, positionII}, fontSize, spacing, tint, game);
+                printText(font, (const char *)copy.c_str(), (Vector2){position.x, (float)positionII}, fontSize, spacing, tint, game);
                 
                 
             }
-            
+
             if ((modifiedText[i]=='<'))
             {
                 modifiedText.replace(i,4,"\0");
+            }
+            if ((modifiedText[i]=='#'))
+            {
+                modifiedText.replace(i,modifiedText.length()-i," ");
             }
             if ((modifiedText[i]=='\n'))
             {
@@ -43,6 +47,19 @@ void utils::updateName(common::Game &game){
         }
         game.storedDialogue[i].text = text;
     } 
+}
+
+std::string utils::preLoadMonsterName(std::string text,std::string monsterName){
+    for (int i = 0; i < 1024; i++)
+    {
+        for (int i = 0; text[i] != '\0'; i++)
+        {
+            if(text[i]=='<' && text[i+1]=='E' && text[i+2]=='>'){
+                text.replace(i,3,monsterName);  
+            }
+        }
+    }
+    return text;
 }
 
 void utils::boxResize(common::Game &game, int x, int y, int width, int height){
