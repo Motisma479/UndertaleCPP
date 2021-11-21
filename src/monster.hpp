@@ -66,6 +66,8 @@ private:
     common::bodyPart Monkhead;
     common::bodyPart Monktorso;
     common::bodyPart Monklegs;
+    common::bodyPart MonkPogI;
+    common::bodyPart MonkPogII;
     Rectangle sizeOfEnemie;
     unsigned int rgb;
     bool asDoneHisFristAnimation=false;
@@ -81,16 +83,22 @@ public:
 };
 
 SpiderMonkey::SpiderMonkey() {
-    Monkhead.texture = LoadTexture("assets/monster/sans/head.png");
+    Monkhead.texture = LoadTexture("assets/monster/spiderMonkey/head.png");
     Monkhead.sizeofPart = {0,0,(float)Monkhead.texture.width,(float)Monkhead.texture.height};
    
 
-    Monktorso.texture = LoadTexture("assets/monster/sans/torso.png");
+    Monktorso.texture = LoadTexture("assets/monster/spiderMonkey/torso.png");
     Monktorso.sizeofPart = {0,0,(float)Monktorso.texture.width,(float)Monktorso.texture.height};
     
 
-    Monklegs.texture = LoadTexture("assets/monster/sans/legs.png");
+    Monklegs.texture = LoadTexture("assets/monster/spiderMonkey/legs.png");
     Monklegs.sizeofPart = {0,0,(float)Monklegs.texture.width,(float)Monklegs.texture.height};
+
+    MonkPogI.texture = LoadTexture("assets/monster/spiderMonkey/pog_1.png");
+    MonkPogI.sizeofPart = {0,0,(float)MonkPogI.texture.width,(float)MonkPogI.texture.height};
+
+    MonkPogII.texture = LoadTexture("assets/monster/spiderMonkey/pog_2.png");
+    MonkPogII.sizeofPart = {0,0,(float)MonkPogII.texture.width,(float)MonkPogII.texture.height};
 
     maxHP=100;
     HP=maxHP;
@@ -107,12 +115,16 @@ SpiderMonkey::~SpiderMonkey() {
     UnloadTexture(Monkhead.texture);
     UnloadTexture(Monktorso.texture);
     UnloadTexture(Monklegs.texture);
+    UnloadTexture(MonkPogI.texture);
+    UnloadTexture(MonkPogII.texture);
 }
 
 void SpiderMonkey::animate(common::Game &game) {
     Monklegs.sizeofDraw = {(float)((SCREEN_HEIGHT/2)+Monklegs.texture.width/2+5),game.battle.Box.y-Monklegs.texture.height*2-16,(float)Monklegs.texture.width*2,(float)Monklegs.texture.height*2};//the x and y is the pos of the texture in the window 
     Monktorso.sizeofDraw = {(float)((SCREEN_HEIGHT/2)+16),Monklegs.sizeofDraw.y-Monktorso.texture.height*2,(float)Monktorso.texture.width*2,(float)Monktorso.texture.height*2};//the x and y is the pos of the texture in the window
     Monkhead.sizeofDraw = {(float)SCREEN_HEIGHT/2+6+Monkhead.texture.width,Monktorso.sizeofDraw.y-Monkhead.texture.height-17,(float)Monkhead.texture.width*2,(float)Monkhead.texture.height*2};//the x and y is the pos of the texture in the window
+    MonkPogI.sizeofDraw = {(float)Monktorso.sizeofDraw.x-200,Monktorso.sizeofDraw.y-MonkPogI.texture.height-17,(float)MonkPogI.texture.width*6,(float)MonkPogI.texture.height*6};//the x and y is the pos of the texture in the window
+    MonkPogII.sizeofDraw = {(float)Monktorso.sizeofDraw.x+200+MonkPogII.texture.width,Monktorso.sizeofDraw.y-MonkPogII.texture.height-17,(float)MonkPogII.texture.width*6,(float)MonkPogII.texture.height*6};//the x and y is the pos of the texture in the window
     
     if(!asDoneHisFristAnimation){
         Monkhead.origin.x+=3;
@@ -197,6 +209,34 @@ void SpiderMonkey::animate(common::Game &game) {
         
     }
    
+    if (MonkPogI.origin.x > 10)
+    {
+       MonkPogI.origin.y+=0.25;
+    }else{
+        MonkPogI.origin.y -=0.25;
+    }
+    if (MonkPogI.origin.y > 10)
+    {
+        MonkPogI.origin.x -=0.25;
+    }
+    else{
+        MonkPogI.origin.x +=0.25;
+    }
+
+    if (MonkPogII.origin.x < 10)
+    {
+       MonkPogII.origin.y+=0.25;
+    }else{
+        MonkPogII.origin.y -=0.25;
+    }
+    if (MonkPogII.origin.y < 10)
+    {
+        MonkPogII.origin.x -=0.25;
+    }
+    else{
+        MonkPogII.origin.x +=0.25;
+    }
+
     rgb = ((rgb+10)%0xffff);
     
 }
@@ -207,6 +247,8 @@ void SpiderMonkey::drawSprite() {
     DrawTexturePro(Monklegs.texture,Monklegs.sizeofPart,Monklegs.sizeofDraw,Monklegs.origin,0,ColorFromHSV(rgb,0.5,1.0));
     DrawTexturePro(Monktorso.texture,Monktorso.sizeofPart,Monktorso.sizeofDraw,Monktorso.origin,0,ColorFromHSV(rgb,0.5,1.0));
     DrawTexturePro(Monkhead .texture,Monkhead .sizeofPart,Monkhead .sizeofDraw,Monkhead.origin,0,ColorFromHSV(rgb,0.5,1.0));
+    DrawTexturePro(MonkPogI .texture,MonkPogI .sizeofPart,MonkPogI .sizeofDraw,MonkPogI.origin,0,ColorFromHSV(rgb,0.5,1.0));
+    DrawTexturePro(MonkPogII .texture,MonkPogII .sizeofPart,MonkPogII .sizeofDraw,MonkPogII.origin,0,ColorFromHSV(rgb,0.5,1.0));
     DrawText(TextFormat("%s", name.c_str()), 222, 10, 29, ColorFromHSV(rgb,0.5,1.0));
 }
 

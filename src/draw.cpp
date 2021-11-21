@@ -329,22 +329,22 @@ void drawFight(common::Game &game){
                 game.monsters[0]->drawTextBox(game);
             }else if (game.battle.buttonMenu == 1)
             {
-                DrawTextEx(game.HBIT,TextFormat("* %s",game.monsters[0]->name.c_str()),(Vector2){ game.battle.Box.x+75, game.battle.Box.y+20},(float)game.HBIT.baseSize/1,3,WHITE);
+                DrawTextEx(game.HBIT,TextFormat("* %s",game.monsters[0]->name.c_str()),(Vector2){ game.battle.Box.x+68, game.battle.Box.y+20},(float)game.HBIT.baseSize/1,3,WHITE);
             }else if (game.battle.buttonMenu == 2)
             {
-                DrawTextEx(game.HBIT,TextFormat("* %s",game.monsters[0]->name.c_str()),(Vector2){ game.battle.Box.x+75, game.battle.Box.y+20},(float)game.HBIT.baseSize/1,3,WHITE);
+                DrawTextEx(game.HBIT,TextFormat("* %s",game.monsters[0]->name.c_str()),(Vector2){ game.battle.Box.x+68, game.battle.Box.y+20},(float)game.HBIT.baseSize/1,3,WHITE);
             }else if (game.battle.buttonMenu == 3)
             {
                 int basey = 20;
-                int basex = 75;
+                int basex = 68;
                 for (int i = 0; i < 4 && game.player.item[i] != NULL; i++)
                 {
                     DrawTextEx(game.HBIT,TextFormat("* %s",game.player.item[0]->name.c_str()),(Vector2){ game.battle.Box.x+basex, game.battle.Box.y+basey},(float)game.HBIT.baseSize/1,3,WHITE);
-                    basex += 250;
+                    basex += 240;
                     if (basex > 325)
                     {
-                        basex = 75;
-                        basey+=30;
+                        basex = 68;
+                        basey+=32;
                     }
                 }
                 DrawTextEx(game.HBIT,TextFormat("Page 1"),(Vector2){ game.battle.Box.x+355, game.battle.Box.y+80},(float)game.HBIT.baseSize/1,3,WHITE);
@@ -487,9 +487,9 @@ void updateFight(common::Game &game){
         game.player.sizeOfInteraction.y =       game.player.position.y;
     }
     //Put the Player in the box for interaction
-    if (game.battle.buttonMenu != 0 && ( game.player.position.y!=game.battle.Box.y+30  &&  game.player.position.y!=game.battle.Box.y+60)) {
-        game.player.position.x =                game.battle.Box.x+35;
-        game.player.position.y =                game.battle.Box.y+30;
+    if (game.battle.buttonMenu != 0 && ( game.player.position.y!=game.battle.Box.y+28  &&  game.player.position.y!=game.battle.Box.y+60)) {
+        game.player.position.x =                game.battle.Box.x+32;
+        game.player.position.y =                game.battle.Box.y+28;
         game.player.sizeOfInteraction.x =       game.player.position.x;
         game.player.sizeOfInteraction.y =       game.player.position.y;
     }
@@ -522,11 +522,11 @@ void updateFight(common::Game &game){
             {
                 switch (pos)
                 {
-                case 67:
-                    game.player.position.x+=253;
+                case 64:
+                    game.player.position.x+=248;
                     break;
                 default:
-                    game.player.position.x=67;
+                    game.player.position.x=64;
                 }
             }
             game.player.sizeOfInteraction.x =        game.player.position.x;
@@ -558,11 +558,11 @@ void updateFight(common::Game &game){
             {
                 switch (pos)
                 {
-                case 320:
-                    game.player.position.x-=253;
+                case 312:
+                    game.player.position.x-=248;
                     break;
                 default:
-                    game.player.position.x=320;
+                    game.player.position.x=312;
                 }
             }
             game.player.sizeOfInteraction.x =        game.player.position.x;
@@ -575,7 +575,7 @@ void updateFight(common::Game &game){
                 switch (pos)
                 {
                 case 310:
-                    game.player.position.y-=30;
+                    game.player.position.y-=32;
                     break;
                 default:
                     game.player.position.y=310;
@@ -590,11 +590,11 @@ void updateFight(common::Game &game){
             {
                 switch (pos)
                 {
-                case 280:
-                    game.player.position.y+=30;
+                case 278:
+                    game.player.position.y+=32;
                     break;
                 default:
-                    game.player.position.y=280;
+                    game.player.position.y=278;
                 }
             }
             game.player.sizeOfInteraction.x =        game.player.position.x;
