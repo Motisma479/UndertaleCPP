@@ -6,4 +6,6 @@ namespace utils{
     void boxResize(common::Game &game, int x, int y, int width, int height);
     void initButton(common::button &button, int x, int y);
     void initSoul(common::Player &player);
+    void initItem(common::Game &game);
+    void onItemUse(common::Game &game, int itemPos);
 }

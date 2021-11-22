@@ -273,7 +273,9 @@ void drawFight(common::Game &game){
         if (game.showDebug == 1)
         {
             DrawText(TextFormat("Game State: %d", game.gameState), 450, 260, 20, LIGHTGRAY);
-            DrawText(TextFormat("Button Id: %d", game.battle.buttonId), 450, 290, 20, LIGHTGRAY);
+            DrawText(TextFormat("Button Id: %d", game.battle.buttonId), 450, 340, 20, LIGHTGRAY);
+            DrawText(TextFormat("Item Id: %d", game.battle.itemId), 450, 360, 20, LIGHTGRAY);
+            DrawText(TextFormat("f counter: %d", game.frameCounter), 180, 360, 20, LIGHTGRAY);
         }
         
         
@@ -324,30 +326,58 @@ void drawFight(common::Game &game){
         //game.monsters[GetRandomValue(0, 2)];
         if ((game.battle.Box.x == 32 && game.battle.Box.y == 250 && game.battle.Box.width == 575 && game.battle.Box.height ==140)  &&!game.player.isInBattle)
         {
-            if (game.battle.buttonMenu == 0)
+            if (game.battle.buttonMenu == 0) //print the menu message
             {
                 game.monsters[0]->drawTextBox(game);
-            }else if (game.battle.buttonMenu == 1)
+            }else if (game.battle.buttonMenu == 1)// print the monster name and his hp bar for the fight button
             {
                 DrawTextEx(game.HBIT,TextFormat("* %s",game.monsters[0]->name.c_str()),(Vector2){ game.battle.Box.x+68, game.battle.Box.y+20},(float)game.HBIT.baseSize/1,3,WHITE);
-            }else if (game.battle.buttonMenu == 2)
+            }else if (game.battle.buttonMenu == 2)// print the monster name for the Act button
             {
                 DrawTextEx(game.HBIT,TextFormat("* %s",game.monsters[0]->name.c_str()),(Vector2){ game.battle.Box.x+68, game.battle.Box.y+20},(float)game.HBIT.baseSize/1,3,WHITE);
-            }else if (game.battle.buttonMenu == 3)
+            }else if (game.battle.buttonMenu == 3)// print the inventory
             {
                 int basey = 20;
                 int basex = 68;
-                for (int i = 0; i < 4 && game.player.item[i] != NULL; i++)
+                if (game.battle.isFirstPageItem)
                 {
-                    DrawTextEx(game.HBIT,TextFormat("* %s",game.player.item[0]->name.c_str()),(Vector2){ game.battle.Box.x+basex, game.battle.Box.y+basey},(float)game.HBIT.baseSize/1,3,WHITE);
-                    basex += 240;
-                    if (basex > 325)
+                    for (int i = 0; i < 4 && game.player.item[i] != NULL; i++)
                     {
-                        basex = 68;
-                        basey+=32;
+                        if (game.player.item[i]->isNull == true)
+                        {
+                            break;
+                        }
+                        DrawTextEx(game.HBIT,TextFormat("* %s",game.player.item[i]->name.c_str()),(Vector2){ game.battle.Box.x+basex, game.battle.Box.y+basey},(float)game.HBIT.baseSize/1,3,WHITE);
+                        basex += 240;
+                        if (basex > 325)
+                        {
+                            basex = 68;
+                            basey+=32;
+                        }
+                        
+                        
                     }
+                    DrawTextEx(game.HBIT,TextFormat("Page 1"),(Vector2){ game.battle.Box.x+355, game.battle.Box.y+80},(float)game.HBIT.baseSize/1,3,WHITE);
+                }else{
+                    for (int i = 4; i < 8 && game.player.item[i] != NULL; i++)
+                    {
+                        if (game.player.item[i]->isNull == true)
+                        {
+                            break;
+                        }
+                        DrawTextEx(game.HBIT,TextFormat("* %s",game.player.item[i]->name.c_str()),(Vector2){ game.battle.Box.x+basex, game.battle.Box.y+basey},(float)game.HBIT.baseSize/1,3,WHITE);
+                        basex += 240;
+                        if (basex > 325)
+                        {
+                            basex = 68;
+                            basey+=32;
+                        }
+                        
+                    }
+                    DrawTextEx(game.HBIT,TextFormat("Page 2"),(Vector2){ game.battle.Box.x+355, game.battle.Box.y+80},(float)game.HBIT.baseSize/1,3,WHITE);
                 }
-                DrawTextEx(game.HBIT,TextFormat("Page 1"),(Vector2){ game.battle.Box.x+355, game.battle.Box.y+80},(float)game.HBIT.baseSize/1,3,WHITE);
+                
+                
                 //DrawTextEx(game.HBIT,TextFormat("* %s",game.player.item[0]->name.c_str()),(Vector2){ game.battle.Box.x+75, game.battle.Box.y+20},(float)game.HBIT.baseSize/1,3,WHITE);
                 //DrawTextEx(game.HBIT,TextFormat("* %s",game.player.item[1]->name.c_str()),(Vector2){ game.battle.Box.x+75, game.battle.Box.y+50},(float)game.HBIT.baseSize/1,3,WHITE);
             }
@@ -412,24 +442,32 @@ void updateFight(common::Game &game){
             {
                 game.battle.buttonMenu = 4;
             }
+        }else if (game.battle.buttonMenu == 3)
+        {
+            utils::onItemUse(game,game.battle.itemId);
         }
         
         
+        
     }
+    //When Enter is pressed
     if (IsKeyPressed(KEY_X)) {
         /* game.frameCounter = 0;
         game.monsters[0]->neutralPicker = GetRandomValue(21, 25); */
         if (game.battle.buttonMenu == 1 || game.battle.buttonMenu == 2 || game.battle.buttonMenu == 3 || game.battle.buttonMenu == 4)
         {
             game.battle.buttonMenu = 0;
+            game.battle.isFirstPageItem = true;
+            game.battle.itemId=0;
+            game.textFrame=0;
         }
-        
     }
 
     //for test the resize box
     if (IsKeyPressed(KEY_LEFT_CONTROL)) {
         if(game.player.isInBattle){
             game.player.isInBattle = false;
+            game.battle.isFighting = false;
         }
         else{
             game.player.isInBattle=true;
@@ -493,7 +531,15 @@ void updateFight(common::Game &game){
         game.player.sizeOfInteraction.x =       game.player.position.x;
         game.player.sizeOfInteraction.y =       game.player.position.y;
     }
-    
+    //Put the Player in the box for combat
+    if ( (game.battle.Box.width == 140 && game.battle.Box.height ==140) && (game.player.position.x < game.battle.Box.x && game.player.position.y < game.battle.Box.y)) {
+        game.player.position.x =                game.battle.Box.x+game.battle.Box.width/2-game.player.Soul.width/2;
+        game.player.position.y =                game.battle.Box.y+game.battle.Box.height/2-game.player.Soul.height/2;
+
+        game.player.sizeOfInteraction.x =       game.player.position.x;
+        game.player.sizeOfInteraction.y =       game.player.position.y;
+        game.battle.isFighting = true;
+    }
     //movement of the Player in the menu
     if (!game.player.isInBattle && (game.battle.Box.x == 32 && game.battle.Box.y == 250 && game.battle.Box.width == 575 && game.battle.Box.height ==140)) {
         if (IsKeyPressed(KEY_RIGHT)) {
@@ -520,13 +566,36 @@ void updateFight(common::Game &game){
             }
             if(game.battle.buttonMenu==3)//Item
             {
+                if ((game.player.item[4]!=NULL && game.player.item[4]->isNull == false) && game.player.position.x == 312 && game.player.position.y == 278)
+                {
+                    game.battle.isFirstPageItem = false;
+                    game.battle.itemId = 5;
+                }
+                
                 switch (pos)
                 {
                 case 64:
-                    game.player.position.x+=248;
+                    if ((game.battle.isFirstPageItem&&(game.player.item[1]!= NULL || game.player.item[3] != NULL))||(game.battle.isFirstPageItem == false&&(game.player.item[5]!= NULL || game.player.item[7] != NULL)))
+                    {
+                        if (game.player.position.y == 278 && ((game.battle.isFirstPageItem && game.player.item[1]->isNull == false)||(game.battle.isFirstPageItem== false && game.player.item[5]->isNull == false)))
+                        {
+                            game.player.position.x+=248;
+                            game.battle.itemId += 1;
+                        }
+                        if (game.player.position.y == 310 && ((game.battle.isFirstPageItem && game.player.item[3]->isNull == false)||(game.battle.isFirstPageItem== false && game.player.item[7]->isNull == false)))
+                        {
+                            game.player.position.x+=248;
+                            game.battle.itemId += 1;
+                        }
+                        
+                        
+                        
+                    }
                     break;
                 default:
                     game.player.position.x=64;
+                    game.battle.itemId -= 1;
+                    break;
                 }
             }
             game.player.sizeOfInteraction.x =        game.player.position.x;
@@ -556,14 +625,35 @@ void updateFight(common::Game &game){
             }
             if(game.battle.buttonMenu==3)//ITEM
             {
-                switch (pos)
+                if ((game.player.item[4]!=NULL && game.player.item[4]->isNull == false) && game.player.position.x == 64 && game.player.position.y == 278)
                 {
-                case 312:
-                    game.player.position.x-=248;
-                    break;
-                default:
-                    game.player.position.x=312;
+                    game.battle.isFirstPageItem = true;
+                    game.battle.itemId = 0;
                 }
+                    switch (pos)
+                    {
+                    case 312:
+                        game.player.position.x-=248;
+                        game.battle.itemId -= 1;
+                        
+                        break;
+                    default:
+                        if ((game.battle.isFirstPageItem&&(game.player.item[2]!= NULL || game.player.item[3] != NULL))||(game.battle.isFirstPageItem == false&&(game.player.item[6]!= NULL || game.player.item[7] != NULL)))
+                        {
+                            if (game.player.position.y == 278 && ((game.battle.isFirstPageItem && game.player.item[1]->isNull == false)||(game.battle.isFirstPageItem== false && game.player.item[5]->isNull == false)))
+                            {
+                                game.player.position.x=312;
+                                game.battle.itemId += 1;
+                            }
+                            if (game.player.position.y == 310 && ((game.battle.isFirstPageItem && game.player.item[3]->isNull == false)||(game.battle.isFirstPageItem== false && game.player.item[7]->isNull == false)))
+                            {
+                                game.player.position.x=312;
+                                game.battle.itemId += 1;
+                            }
+                        }
+                        
+                        break;
+                    }  
             }
             game.player.sizeOfInteraction.x =        game.player.position.x;
             game.player.sizeOfInteraction.y =        game.player.position.y;
@@ -576,9 +666,23 @@ void updateFight(common::Game &game){
                 {
                 case 310:
                     game.player.position.y-=32;
+                    game.battle.itemId -= 2;
                     break;
                 default:
-                    game.player.position.y=310;
+                    if ((game.battle.isFirstPageItem&&(game.player.item[2]!= NULL || game.player.item[3] != NULL))||(game.battle.isFirstPageItem == false&&(game.player.item[6]!= NULL || game.player.item[7] != NULL)))
+                    {
+                        
+                        if (game.player.position.x == 64 && ((game.battle.isFirstPageItem && game.player.item[2]->isNull == false)||(game.battle.isFirstPageItem== false && game.player.item[6]->isNull == false)))
+                        {
+                            game.player.position.y=310;
+                            game.battle.itemId += 2;
+                        }
+                        if (game.player.position.x == 312 && ((game.battle.isFirstPageItem && game.player.item[3]->isNull == false)||(game.battle.isFirstPageItem== false && game.player.item[7]->isNull == false)))
+                        {
+                            game.player.position.y=310;
+                            game.battle.itemId += 2;
+                        }
+                    }
                 }
             }
             game.player.sizeOfInteraction.x =        game.player.position.x;
@@ -591,16 +695,32 @@ void updateFight(common::Game &game){
                 switch (pos)
                 {
                 case 278:
-                    game.player.position.y+=32;
+                    if ((game.battle.isFirstPageItem&&(game.player.item[2]!= NULL || game.player.item[3] != NULL))||(game.battle.isFirstPageItem == false&&(game.player.item[6]!= NULL || game.player.item[7] != NULL)))
+                    {
+                        
+                        if (game.player.position.x == 64 && ((game.battle.isFirstPageItem && game.player.item[2]->isNull == false)||(game.battle.isFirstPageItem== false && game.player.item[6]->isNull == false)))
+                        {
+                            game.player.position.y+=32;
+                            game.battle.itemId += 2;
+                        }
+                        if (game.player.position.x == 312 && ((game.battle.isFirstPageItem && game.player.item[3]->isNull == false)||(game.battle.isFirstPageItem== false && game.player.item[7]->isNull == false)))
+                        {
+                            game.player.position.y+=32;
+                            game.battle.itemId += 2;
+                        }
+                    }
                     break;
                 default:
                     game.player.position.y=278;
+                    game.battle.itemId -= 2;
                 }
             }
             game.player.sizeOfInteraction.x =        game.player.position.x;
             game.player.sizeOfInteraction.y =        game.player.position.y;
         }
     }
+
+    
 
     //collission with fight
     if (CheckCollisionRecs(game.player.sizeOfInteraction, game.battle.fight.sizeOfInteraction))
@@ -639,6 +759,53 @@ void updateFight(common::Game &game){
         game.battle.mercy.sizeOfFrame.y =              0*game.battle.mercy.sizeOfFrame.height;
     } 
     
+    if (game.battle.isFighting )
+    {
+        game.monsters[0]->updateAttack(game);
+        game.monsters[0]->attack(game);
+        
+        
+        if (IsKeyDown(KEY_RIGHT))
+        {
+            if (CheckCollisionRecs((Rectangle){game.battle.MoveZone.x,game.battle.MoveZone.y,game.battle.MoveZone.width-game.player.sizeOfInteraction.width,game.battle.MoveZone.height},game.player.sizeOfInteraction))
+            {
+            game.player.position.x+=1;
+            }
+            game.player.sizeOfInteraction.x =        game.player.position.x;
+            game.player.sizeOfInteraction.y =        game.player.position.y;
+        }
+        if (IsKeyDown(KEY_LEFT))
+          {
+            if (CheckCollisionRecs((Rectangle){game.battle.MoveZone.x+game.player.sizeOfInteraction.width,game.battle.MoveZone.y,game.battle.MoveZone.width,game.battle.MoveZone.height},game.player.sizeOfInteraction))
+            {
+            game.player.position.x-=1;
+            }
+            game.player.sizeOfInteraction.x =        game.player.position.x;
+            game.player.sizeOfInteraction.y =        game.player.position.y;
+          }
+         if (IsKeyDown(KEY_UP))
+         {
+            if (CheckCollisionRecs((Rectangle){game.battle.MoveZone.x,game.battle.MoveZone.y+game.player.sizeOfInteraction.height,game.battle.MoveZone.width,game.battle.MoveZone.height},game.player.sizeOfInteraction))
+            {
+            game.player.position.y-=1;
+            }
+            game.player.sizeOfInteraction.x =        game.player.position.x;
+            game.player.sizeOfInteraction.y =        game.player.position.y;
+        }
+        if (IsKeyDown(KEY_DOWN))
+        {
+            if (CheckCollisionRecs((Rectangle){game.battle.MoveZone.x,game.battle.MoveZone.y,game.battle.MoveZone.width,game.battle.MoveZone.height-game.player.sizeOfInteraction.height},game.player.sizeOfInteraction))
+            {
+            game.player.position.y+=1;
+            }
+            game.player.sizeOfInteraction.x =        game.player.position.x;
+            game.player.sizeOfInteraction.y =        game.player.position.y;
+        }
+        
+        
+    }
+    
+
 }
 // Draw Game Over
 void drawGOver(common::Game &game){

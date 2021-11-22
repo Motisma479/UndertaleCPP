@@ -1,4 +1,5 @@
 #include "utils.hpp"
+#include "items.hpp"
 void utils::printText(Font font, const char *rawText, Vector2 position, float fontSize, float spacing, Color tint, common::Game &game){
     std::string modifiedText = rawText;
     // copy;
@@ -131,4 +132,58 @@ void utils::initSoul(common::Player &player){
         player.sizeOfInteraction.y =        player.position.y;
         player.sizeOfInteraction.height =   player.sizeOfFrame.height;
         player.sizeOfInteraction.width =    (float)player.Soul.width;
+}
+
+
+void utils::initItem(common::Game &game){
+    game.player.item[0] = new Sandwich();
+    game.player.item[1] = new Sandwich();
+    game.player.item[2] = new Sandwich();
+    game.player.item[3] = new Sandwich();
+    game.player.item[4] = new Dandelion();
+    game.player.item[5] = new RealKnife();
+    game.player.item[6] = new RealKnife();
+    game.player.item[7] = new Dandelion();
+}
+
+void utils::onItemUse(common::Game &game, int itemPos){
+    //0: unConsumables and unEquippable; 1: Consumables; 2: Equippable;
+    if(game.player.item[itemPos]->type == 1){
+        if (game.player.HP < game.player.maxHP)
+        {
+            game.player.HP += game.player.item[itemPos]->HP_regen;
+            if (game.player.HP > game.player.maxHP)
+            {
+                game.player.HP=game.player.maxHP;
+            }
+            
+        }
+        
+    }
+    if (itemPos+1 == 8 || game.player.item[itemPos+1]==NULL || game.player.item[itemPos+1]->isNull)
+    {
+        delete game.player.item[itemPos];
+        game.player.item[itemPos] = new null();
+    }
+    else{
+        for (int i = itemPos; game.player.item[i]!=NULL; i++)
+        {
+            
+            game.player.item[i]=game.player.item[i+1];
+            if (game.player.item[i+1] == NULL)
+            {
+                delete game.player.item[i];
+                game.player.item[i] = new null();
+                break;
+            }
+            if (game.player.item[i+1] == NULL)
+            {
+                delete game.player.item[i];
+                game.player.item[i] = new null();
+                break;
+            }
+        }
+        
+    }
+    
 }

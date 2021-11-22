@@ -74,12 +74,18 @@ private:
     bool torsoLeftToRight=true;
     bool headLeftToRight=false;
     bool legsLeftToRight=false;
+
+    Vector2 posCercle = {0,0};
+
+    //int fcounter = 0;
 public:
     SpiderMonkey();
     ~SpiderMonkey();
     void animate(common::Game &game) override;
     void drawTextBox(common::Game &game) override;
     void drawSprite() override;
+    void attack(common::Game &game) override;
+    void updateAttack(common::Game &game) override;
 };
 
 SpiderMonkey::SpiderMonkey() {
@@ -238,7 +244,6 @@ void SpiderMonkey::animate(common::Game &game) {
     }
 
     rgb = ((rgb+10)%0xffff);
-    
 }
 
 void SpiderMonkey::drawSprite() {
@@ -264,4 +269,11 @@ void SpiderMonkey::drawTextBox(common::Game &game) {
     }
     DrawTextPro(game.HBIT,TextSubtext("*", 0, game.textFrame/5),(Vector2){ game.battle.Box.x+20, game.battle.Box.y+20 },(Vector2){ 0,0 },0,(float)game.HBIT.baseSize/1,3,WHITE);
     utils::printText(game.HBIT,TextSubtext(TextFormat("%s", text.c_str()), 0, game.textFrame/5),(Vector2){ game.battle.Box.x+50, game.battle.Box.y+20 },(float)game.HBIT.baseSize/1,3,WHITE,game);
+}
+
+void SpiderMonkey::attack(common::Game &game) {
+    DrawCircle(game.battle.Box.x+posCercle.x,game.battle.Box.y+posCercle.y+30,15,RED);
+}
+void SpiderMonkey::updateAttack(common::Game &game) {
+    posCercle.x++;
 }

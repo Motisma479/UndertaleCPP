@@ -17,7 +17,7 @@ namespace common{
 		int HP_regen;//usable for Consumables and some weapon
 		int type = 0;//0: unConsumables and unEquippable; 1: Consumables; 2: Equippable;
 		bool isAWeapon = true;//only use if type = 2; if false it's an Armor;
-
+		bool isNull = false;//dont modidy this parameter or the item will cause probleme
 	};
 
 	class LivingEntity
@@ -39,7 +39,7 @@ namespace common{
 		int DEF_Modifier;
 		bool isInBattle = false;
 
-		Item* item[8];
+		Item* item[7];
 		Item curentWeapon;
 		Item curentArmor;
 		
@@ -58,6 +58,8 @@ namespace common{
 		virtual void animate(common::Game &game) = 0;
 		virtual void drawSprite() = 0;
 		virtual void drawTextBox(common::Game &game) = 0;
+		virtual void updateAttack(common::Game &game) = 0;
+		virtual void attack(common::Game &game) = 0;
 	};
 
 	struct dialogue
@@ -67,20 +69,28 @@ namespace common{
 	
 	struct bodyPart
 	{
-		Texture2D texture;
-		Rectangle sizeofDraw;
-		Rectangle sizeofPart;
-		Vector2 origin = {0,0};
+		Texture2D 	texture;
+		Rectangle 	sizeofDraw;
+		Rectangle 	sizeofPart;
+		Vector2 	origin = {0,0};
+	};
+
+	struct Interaction
+	{
+		std::string name;
+		Rectangle 	sizeofDraw;
+		Rectangle 	sizeofPart;
+		Vector2 	origin = {0,0};
 	};
 
 	class introduction
 	{
 	public:
-		int textureY =0; 
-		int introStartFrame = 0;
-		int introSlideStartFrame = 0;
-		float alpha = 0.0;
-		int dialogueToShow = 0;
+		int 	textureY =0; 
+		int 	introStartFrame = 0;
+		int 	introSlideStartFrame = 0;
+		float 	alpha = 0.0;
+		int 	dialogueToShow = 0;
 	};
 
 	class button
@@ -97,15 +107,23 @@ namespace common{
 	{
 	public:
 		Rectangle 	Box =  { 32, 250, 575, 140 };
+		Rectangle	MoveZone = {245,255,130,130};
+
 		bool 		isStart = true;
 		Texture2D 	background;
 		bool		EncounterPhase = true;
-		int buttonId = 0 ;
-		int buttonMenu = 0; // 0 no button selected; 1 FIGHT button selected; 2 ACT button selected; 3 ITEM button selected; 4 MERCYbutton selected;
-		button fight;
-		button action;
-		button item;
-		button mercy;
+
+		int 		buttonId = 0 ;
+		int 		buttonMenu = 0; // 0 no button selected; 1 FIGHT button selected; 2 ACT button selected; 3 ITEM button selected; 4 MERCYbutton selected;
+		bool 		isFirstPageItem = true;
+		int 		itemId = 0;
+
+		bool		isFighting = false;
+
+		button 		fight;
+		button 		action;
+		button 		item;
+		button 		mercy;
 	};	
 	
 	class Game
@@ -124,7 +142,7 @@ namespace common{
 		Font 			HBIT;
 		dialogue* 		storedDialogue;
 		int 			dialogueLine;
-		Monster* monsters[3];
+		Monster* 		monsters[3];
 		Texture2D 		Texture;
 		
 		introduction 	intro;

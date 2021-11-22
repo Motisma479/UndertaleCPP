@@ -3,7 +3,7 @@
 #include "loader.hpp"
 #include "utils.hpp"
 #include "monster.hpp"
-#include "items.hpp"
+//#include "items.hpp"
 
 int main()
 {
@@ -27,10 +27,7 @@ int main()
     // game.monsters[0] = new Sans();
     game.monsters[0] = new SpiderMonkey();
     //item
-    game.player.item[0] = new Sandwich();
-    game.player.item[1] = new Sandwich();
-    game.player.item[2] = new Sandwich();
-    game.player.item[3] = new Sandwich();
+    utils::initItem(game);
     /***************************************/
 
 
@@ -53,10 +50,10 @@ int main()
     //delete game.monsters[1];
     delete game.monsters[0];
     //item
-    delete game.player.item[0];
-    delete game.player.item[1];
-    delete game.player.item[2];
-    delete game.player.item[3];
+    for (int i = 0; game.player.item[i] != NULL; i++)
+    {
+        delete game.player.item[i];
+    }
     /***************************************/
 
     UnloadFont(game.HBIT);

@@ -2,7 +2,7 @@ showDebug: 0
 debugBattle: 1
 takeDamage: 1
 name: Chara
-HP: 100
+HP: 1
 ATK: 10
 DEF: 10
 EXP: 0
